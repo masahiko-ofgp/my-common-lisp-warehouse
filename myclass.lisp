@@ -1,3 +1,8 @@
+(defpackage :myclass
+  (:use :cl)
+  (:export :main))
+(in-package :myclass)
+
 (defclass dog ()
   ((name
      :initarg :name

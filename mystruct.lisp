@@ -1,3 +1,8 @@
+(defpackage :mystruct
+  (:use :cl)
+  (:export :main))
+(in-package :mystruct)
+
 (defstruct person name email)
 
 (defstruct dog name)

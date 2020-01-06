@@ -1,3 +1,9 @@
+(defpackage :color
+  (:use :cl)
+  (:export :colorize
+           *color-table*))
+(in-package :color)
+
 (defvar *color-table* '(:fg-black "30"
                         :bg-black "40"
                         :fg-red "31"

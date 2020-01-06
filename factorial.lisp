@@ -1,8 +1,13 @@
-(defun fact-cc (n cont)
+(defpackage :factorial
+  (:use :cl)
+  (:export :fact))
+(in-package :factorial)
+
+(defun fact-cps (n cont)
   (if (zerop n)
     (funcall cont 1)
-    (fact-cc (1- n) (lambda (x) (funcall cont (* n x))))))
+    (fact-cps (1- n) (lambda (x) (funcall cont (* n x))))))
 
-;; factorial main
+;; factorial (continue passing style)
 (defun fact (n)
-  (fact-cc n #'(lambda (x) x)))
+  (fact-cps n #'(lambda (x) x)))
