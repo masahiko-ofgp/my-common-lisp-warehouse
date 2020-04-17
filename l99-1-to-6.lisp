@@ -15,7 +15,7 @@
 (defun lst (l)
   (when (typep l 'list)
     (cond
-      ((eql l '()) nil)
+      ((null l) nil)
       ((eql (cdr l) nil) (car l))
       (t (lst (cdr l))))))
 
@@ -24,8 +24,8 @@
 (defun lst-two (l)
   (when (typep l 'list)
     (cond
-      ((or (eql l '()) (eql (cdr l) nil)) nil)
-      ((eql (cddr l) nil) l)
+      ((or (null l) (null (cdr l))) nil)
+      ((null (cddr l)) l)
       (t (lst-two (cdr l))))))
 
 
@@ -33,7 +33,7 @@
 (defun at (l k)
   (when (typep l 'list)
     (cond
-      ((eql l '()) nil)
+      ((null l) nil)
       (t (if (= k 1)
              (car l)
              (at (cdr l) (1- k)))))))
@@ -43,7 +43,7 @@
 (defun leng (l)
   (when (typep l 'list)
     (labels ((aux (n ls)
-               (if (eql ls '())
+               (if (null ls)
                    n
                    (aux (1+ n) (cdr ls)))))
     (aux 0 l))))
@@ -52,7 +52,7 @@
 (defun revrs (l)
   (when (typep l 'list)
     (labels ((aux (acc ls)
-               (if (eql ls '())
+               (if (null ls)
                    acc
                    (aux (cons (car ls) acc) (cdr ls)))))
     (aux '() l))))
