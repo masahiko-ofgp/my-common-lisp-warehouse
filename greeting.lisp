@@ -1,11 +1,9 @@
 (defpackage :greeting
   (:use :cl)
-  (:export :hello
-           :hello2))
+  (:export :hello))
 (in-package :greeting)
 
-(defun hello ()
-  (format t "Hello, world!!~%"))
-
-(defun hello2 (name)
-  (format t "Hello, ~A!!~%" name))
+(defun hello (&optional name)
+  (cond
+    ((null name) (hello "world"))
+    (t (format t "Hello, ~A!!~%" name))))
