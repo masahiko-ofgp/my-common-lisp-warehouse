@@ -9,7 +9,8 @@
            :revrs
            :palindromep
            :flltn
-           :compress))
+           :compress
+           :pack))
 (in-package :l99)
 
 
