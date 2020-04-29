@@ -7,7 +7,9 @@
            :at
            :leng
            :revrs
-           :palindromep))
+           :palindromep
+           :flltn
+           :compress))
 (in-package :l99)
 
 
@@ -83,3 +85,15 @@
       ((equal (car l) (cadr l)) (compress (cdr l)))
       ((not (equal (car l) (cadr l))) (cons (car l) (compress (cdr l))))
       (t l))))
+
+
+;; L-09 Pack consecutive duplicates of list elements into sublists.
+(defun pack (l)
+  (when (listp l)
+    (labels ((aux (current acc ls)
+               (cond
+                 ((null ls) ls)
+                 ((null (cdr ls)) (cons (cons (car ls) current) acc))
+                 ((equal (car ls) (cadr ls)) (aux (cons (car ls) current) acc (cdr ls)))
+                 (t (aux '() (cons (cons (car ls) current) acc) (cdr ls))))))
+      (revrs (aux '() '() l)))))
