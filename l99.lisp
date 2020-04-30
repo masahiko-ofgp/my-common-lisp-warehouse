@@ -11,7 +11,8 @@
            :flltn
            :compress
            :pack
-           :encode))
+           :encode
+           :encode2))
 (in-package :l99)
 
 
@@ -111,3 +112,19 @@
                     ((equal (car ls) (cadr ls)) (aux (+ cont 1) acc (cdr ls)))
                     (t (aux 0 (cons (cons (+ cont 1) (car ls)) acc) (cdr ls))))))
       (revrs (aux 0 '() l)))))
+
+
+;; L-11 Modified run-length encoding.
+(defun encode2 (l)
+  (when (listp l)
+    (labels ((create-pair (cnt elem)
+                           (if (eql cnt 1)
+                             (cons :ONE elem)
+                             (cons :MANY (cons cnt elem))))
+             (aux (cnt acc ls)
+                  (cond
+                    ((null ls) '())
+                    ((null (cdr ls)) (cons (create-pair (+ cnt 1) (car ls)) acc))
+                    ((equal (car ls) (cadr ls)) (aux (+ cnt 1) acc (cdr ls)))
+                    (t (aux 0 (cons (create-pair (+ cnt 1) (car ls)) acc) (cdr ls))))))
+    (revrs (aux 0 '() l)))))
