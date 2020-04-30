@@ -10,7 +10,8 @@
            :palindromep
            :flltn
            :compress
-           :pack))
+           :pack
+           :encode))
 (in-package :l99)
 
 
@@ -98,3 +99,15 @@
                  ((equal (car ls) (cadr ls)) (aux (cons (car ls) current) acc (cdr ls)))
                  (t (aux '() (cons (cons (car ls) current) acc) (cdr ls))))))
       (revrs (aux '() '() l)))))
+
+
+;; L-10 Run-length encoding of a list.
+(defun encode (l)
+  (when (listp l)
+    (labels ((aux (cont acc ls)
+                  (cond
+                    ((null ls) '())
+                    ((null (cdr ls)) (cons (cons (+ cont 1) (car ls)) acc))
+                    ((equal (car ls) (cadr ls)) (aux (+ cont 1) acc (cdr ls)))
+                    (t (aux 0 (cons (cons (+ cont 1) (car ls)) acc) (cdr ls))))))
+      (revrs (aux 0 '() l)))))
