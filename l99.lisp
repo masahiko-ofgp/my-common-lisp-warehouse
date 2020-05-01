@@ -115,12 +115,15 @@
 
 
 ;; L-11 Modified run-length encoding.
+(defstruct one value)
+(defstruct many value)
+
 (defun encode2 (l)
   (when (listp l)
     (labels ((create-pair (cnt elem)
                            (if (eql cnt 1)
-                             (cons :ONE elem)
-                             (cons :MANY (cons cnt elem))))
+                             (make-one :value elem)
+                             (make-many :value (cons cnt elem))))
              (aux (cnt acc ls)
                   (cond
                     ((null ls) '())
