@@ -12,7 +12,8 @@
            :compress
            :pack
            :encode
-           :encode2))
+           :encode2
+           :decode))
 (in-package :l99)
 
 
@@ -131,3 +132,17 @@
                     ((equal (car ls) (cadr ls)) (aux (+ cnt 1) acc (cdr ls)))
                     (t (aux 0 (cons (create-pair (+ cnt 1) (car ls)) acc) (cdr ls))))))
     (revrs (aux 0 '() l)))))
+
+
+;; L-12 Decode a run-length encoded list.
+(defun decode (l)
+  (labels ((many (acc n x)
+             (if (eql n 0)
+                 acc
+                 (many (cons x acc) (- n 1) x)))
+           (aux (acc ls)
+             (cond
+               ((null ls) acc)
+               ((and (atom (car ls)) (not (null (cdr ls)))) (aux (cons (car ls) acc) (cdr ls)))
+               (t (aux (many acc (caar ls) (cdar ls)) (cdr ls))))))
+    (aux '() (revrs l))))
