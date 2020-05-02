@@ -13,7 +13,8 @@
            :pack
            :encode
            :encode2
-           :decode))
+           :decode
+           :duplicate))
 (in-package :l99)
 
 
