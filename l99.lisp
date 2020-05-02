@@ -147,3 +147,11 @@
                  ((and (atom (car ls)) (not (null (cdr ls)))) (aux (cons (car ls) acc) (cdr ls)))
                  (t (aux (many acc (caar ls) (cdar ls)) (cdr ls))))))
       (aux '() (revrs l)))))
+
+
+;; L-14 Duplicate the elements of a list.
+(defun duplicate (l)
+  (when (listp l)
+    (cond
+      ((null l) '())
+      (t (cons (car l) (cons (car l) (duplicate (cdr l))))))))
