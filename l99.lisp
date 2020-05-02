@@ -115,22 +115,22 @@
       (revrs (aux 0 '() l)))))
 
 
-;; L-11 Modified run-length encoding.
+;; L-11/13 Modified run-length encoding.
 (defstruct one value)
 (defstruct many value)
 
 (defun encode2 (l)
   (when (listp l)
-    (labels ((create-pair (cnt elem)
-                           (if (= cnt 1)
-                             (make-one :value elem)
-                             (make-many :value (cons cnt elem))))
+    (labels ((rle (cnt x)
+               (if (= cnt 1)
+                   (make-one :value elem)
+                   (make-many :value (cons cnt x))))
              (aux (cnt acc ls)
                   (cond
                     ((null ls) '())
-                    ((null (cdr ls)) (cons (create-pair (+ cnt 1) (car ls)) acc))
+                    ((null (cdr ls)) (cons (rle (+ cnt 1) (car ls)) acc))
                     ((equal (car ls) (cadr ls)) (aux (+ cnt 1) acc (cdr ls)))
-                    (t (aux 0 (cons (create-pair (+ cnt 1) (car ls)) acc) (cdr ls))))))
+                    (t (aux 0 (cons (rle (+ cnt 1) (car ls)) acc) (cdr ls))))))
     (revrs (aux 0 '() l)))))
 
 
