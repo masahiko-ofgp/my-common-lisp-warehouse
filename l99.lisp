@@ -122,7 +122,7 @@
 (defun encode2 (l)
   (when (listp l)
     (labels ((create-pair (cnt elem)
-                           (if (eql cnt 1)
+                           (if (= cnt 1)
                              (make-one :value elem)
                              (make-many :value (cons cnt elem))))
              (aux (cnt acc ls)
@@ -136,13 +136,14 @@
 
 ;; L-12 Decode a run-length encoded list.
 (defun decode (l)
-  (labels ((many (acc n x)
-             (if (eql n 0)
-                 acc
-                 (many (cons x acc) (- n 1) x)))
-           (aux (acc ls)
-             (cond
-               ((null ls) acc)
-               ((and (atom (car ls)) (not (null (cdr ls)))) (aux (cons (car ls) acc) (cdr ls)))
-               (t (aux (many acc (caar ls) (cdar ls)) (cdr ls))))))
-    (aux '() (revrs l))))
+  (when (listp l)
+    (labels ((many (acc n x)
+               (if (= n 0)
+                   acc
+                   (many (cons x acc) (- n 1) x)))
+             (aux (acc ls)
+               (cond
+                 ((null ls) acc)
+                 ((and (atom (car ls)) (not (null (cdr ls)))) (aux (cons (car ls) acc) (cdr ls)))
+                 (t (aux (many acc (caar ls) (cdar ls)) (cdr ls))))))
+      (aux '() (revrs l)))))
