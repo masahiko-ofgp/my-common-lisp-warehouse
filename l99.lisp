@@ -14,7 +14,8 @@
            :encode
            :encode2
            :decode
-           :duplicate))
+           :duplicate
+           :replicate))
 (in-package :l99)
 
 
@@ -156,3 +157,17 @@
     (cond
       ((null l) '())
       (t (cons (car l) (cons (car l) (duplicate (cdr l))))))))
+
+
+;; L-15 Replicate the elements of a list given number of times.
+(defun replicate (l n)
+  (when (listp l)
+    (labels ((prepend (nn acc x)
+               (if (= nn 0)
+                   acc
+                   (prepend (- nn 1) (cons x acc) x)))
+             (aux (acc ls)
+               (cond
+                 ((null ls) acc)
+                 (t (aux (prepend n acc (car ls)) (cdr ls))))))
+      (aux '() (revrs l)))))
