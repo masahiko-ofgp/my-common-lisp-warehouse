@@ -15,7 +15,8 @@
            :encode2
            :decode
            :duplicate
-           :replicate))
+           :replicate
+           :drop))
 (in-package :l99)
 
 
@@ -171,3 +172,14 @@
                  ((null ls) acc)
                  (t (aux (prepend n acc (car ls)) (cdr ls))))))
       (aux '() (revrs l)))))
+
+
+;; L-16 Drop every N'th element from a list.
+(defun drop (l n)
+  (when (listp l)
+    (labels ((aux (i ls)
+               (cond
+                 ((null ls) '())
+                 ((= i n) (aux 1 (cdr ls)))
+                 (t (cons (car ls) (aux (+ i 1) (cdr ls)))))))
+      (aux 1 l))))
