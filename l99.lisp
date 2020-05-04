@@ -16,7 +16,8 @@
            :decode
            :duplicate
            :replicate
-           :drop))
+           :drop
+           :split))
 (in-package :l99)
 
 
@@ -183,3 +184,14 @@
                  ((= i n) (aux 1 (cdr ls)))
                  (t (cons (car ls) (aux (+ i 1) (cdr ls)))))))
       (aux 1 l))))
+
+
+;; L-17 Split a list into two parts. The length of the first part is given.
+(defun split (l n)
+  (when (listp l)
+    (labels ((aux (i acc ls)
+               (cond
+                 ((null ls) (list (revrs acc) '()))
+                 ((= i 0) (list (revrs acc) (cdr ls)))
+                 (t (aux (- i 1) (cons (car ls) acc) (cdr ls))))))
+      (aux n '() l))))
