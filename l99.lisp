@@ -17,7 +17,8 @@
            :duplicate
            :replicate
            :drop
-           :split))
+           :split
+           :slice))
 (in-package :l99)
 
 
@@ -195,3 +196,18 @@
                  ((= i 0) (list (revrs acc) (cdr ls)))
                  (t (aux (- i 1) (cons (car ls) acc) (cdr ls))))))
       (aux n '() l))))
+
+
+;; L-18 Extract a slice from a list. (Not tail recursive)
+(defun slice (l i k)
+  (when (listp l)
+    (labels ((take (n ls)
+               (cond
+                 ((or (null ls) (= n 0)) '())
+                 (t (cons (car ls) (take (- n 1) (cdr ls))))))
+             (drop (n ls)
+               (cond
+                 ((null ls) '())
+                 ((= n 0) ls)
+                 (t (drop (- n 1) (cdr ls))))))
+      (take (+ 1 (- k i)) (drop i l)))))
