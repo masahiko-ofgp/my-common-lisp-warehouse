@@ -211,3 +211,17 @@
                  ((= n 0) ls)
                  (t (drop (- n 1) (cdr ls))))))
       (take (+ 1 (- k i)) (drop i l)))))
+
+
+;; L-18-2 ???WIP
+(defun fold-until (f acc n l)
+  (when (listp l)
+    (cond
+      ((null l) (list acc '()))
+      ((= n 0) (list acc (cdr l)))
+      (t (fold-until f (funcall f acc (car l)) (- n 1) (cdr l))))))
+
+(defun slice2 (l i k)
+  (let* ((ls (cdr (fold-until (lambda (x y) (declare (ignore x y)) '()) '() i l)))
+         (taken (car (fold-until (lambda (acc h) (cons h acc)) '() (+ (- k i) 1) ls))))
+    (flltn (revrs taken))))
