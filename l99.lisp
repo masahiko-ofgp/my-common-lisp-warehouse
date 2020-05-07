@@ -20,7 +20,8 @@
            :split
            :slice
            :slice2
-           :rotate))
+           :rotate
+           :remove-at))
 (in-package :l99)
 
 
@@ -242,3 +243,12 @@
           (let* ((ab (split l n)))
             ; WIP
             (flltn (append (cdr ab) (car ab))))))))
+
+
+;; L-20 Remove the K'th element from a list.
+(defun remove-at (n l)
+  (when (listp l)
+    (cond
+      ((null l) '())
+      ((= n 0) (cdr l))
+      (t (cons (car l) (remove-at (- n 1) (cdr l)))))))
