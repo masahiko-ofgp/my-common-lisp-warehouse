@@ -18,7 +18,9 @@
            :replicate
            :drop
            :split
-           :slice))
+           :slice
+           :slice2
+           :rotate))
 (in-package :l99)
 
 
@@ -213,7 +215,7 @@
       (take (+ 1 (- k i)) (drop i l)))))
 
 
-;; L-18-2 ???WIP
+;; L-18-2
 (defun fold-until (f acc n l)
   (when (listp l)
     (cond
@@ -224,4 +226,19 @@
 (defun slice2 (l i k)
   (let* ((ls (cdr (fold-until (lambda (x y) (declare (ignore x y)) '()) '() i l)))
          (taken (car (fold-until (lambda (acc h) (cons h acc)) '() (+ (- k i) 1) ls))))
+    ; WIP
     (flltn (revrs taken))))
+
+
+;; L-19 Rotate a list N places to the left.
+(defun rotate (l n)
+  (when (listp l)
+    (let* ((len (leng l))
+           (nn (if (= len 0)
+                   0
+                   (mod (mod n (+ len len)) len))))
+      (if (= nn 0)
+          l
+          (let* ((ab (split l n)))
+            ; WIP
+            (flltn (append (cdr ab) (car ab))))))))
