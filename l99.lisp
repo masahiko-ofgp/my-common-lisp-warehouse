@@ -226,8 +226,7 @@
 
 (defun slice2 (l i k)
   (let* ((ls (cdr (fold-until (lambda (x y) (declare (ignore x y)) '()) '() i l)))
-         (taken (car (fold-until (lambda (acc h) (cons h acc)) '() (+ (- k i) 1) ls))))
-    ; WIP
+         (taken (car (fold-until (lambda (acc h) (cons h acc)) '() (+ (- k i) 1) ls)))
     (flltn (revrs taken))))
 
 
@@ -241,7 +240,6 @@
       (if (= nn 0)
           l
           (let* ((ab (split l n)))
-            ; WIP
             (flltn (append (cdr ab) (car ab))))))))
 
 
@@ -252,3 +250,12 @@
       ((null l) '())
       ((= n 0) (cdr l))
       (t (cons (car l) (remove-at (- n 1) (cdr l)))))))
+
+
+;; L-21 Insert an element at a given position into a list.
+(defun insert-at (x n l)
+  (when (listp l)
+    (cond
+      ((null l) (list x))
+      ((= n 0) (cons x l))
+      (t (cons (car l) (insert-at x (- n 1) (cdr l)))))))
