@@ -1,4 +1,5 @@
 ;;; OCaml L-99 problems with Common Lisp
+;; Current progress(2020/05/08): 1 ~ 21
 
 (defpackage :l99
   (:use :cl)
@@ -21,7 +22,8 @@
            :slice
            :slice2
            :rotate
-           :remove-at))
+           :remove-at
+           :insert-at))
 (in-package :l99)
 
 
