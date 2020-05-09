@@ -134,7 +134,7 @@
   (when (listp l)
     (labels ((rle (cnt x)
                (if (= cnt 1)
-                   (make-one :value elem)
+                   (make-one :value x)
                    (make-many :value (cons cnt x))))
              (aux (cnt acc ls)
                   (cond
@@ -229,7 +229,7 @@
 
 (defun slice2 (l i k)
   (let* ((ls (cdr (fold-until (lambda (x y) (declare (ignore x y)) '()) '() i l)))
-         (taken (car (fold-until (lambda (acc h) (cons h acc)) '() (+ (- k i) 1) ls)))
+         (taken (car (fold-until (lambda (acc h) (cons h acc)) '() (+ (- k i) 1) ls))))
     (flttn (revrs taken))))
 
 
