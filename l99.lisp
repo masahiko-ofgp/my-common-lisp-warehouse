@@ -9,7 +9,7 @@
            :leng
            :revrs
            :palindromep
-           :flltn
+           :flttn
            :compress
            :pack
            :encode
@@ -82,7 +82,7 @@
 
 
 ;; L-07 Flatten a nested list structure.
-(defun flltn (l)
+(defun flttn (l)
   (when (listp l)
     (labels ((aux (acc ls)
                   (cond
@@ -230,7 +230,7 @@
 (defun slice2 (l i k)
   (let* ((ls (cdr (fold-until (lambda (x y) (declare (ignore x y)) '()) '() i l)))
          (taken (car (fold-until (lambda (acc h) (cons h acc)) '() (+ (- k i) 1) ls)))
-    (flltn (revrs taken))))
+    (flttn (revrs taken))))
 
 
 ;; L-19 Rotate a list N places to the left.
@@ -243,7 +243,7 @@
       (if (= nn 0)
           l
           (let* ((ab (split l n)))
-            (flltn (append (cdr ab) (car ab))))))))
+            (flttn (append (cdr ab) (car ab))))))))
 
 
 ;; L-20 Remove the K'th element from a list.
