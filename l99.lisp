@@ -23,7 +23,8 @@
            :slice2
            :rotate
            :remove-at
-           :insert-at))
+           :insert-at
+           :range))
 (in-package :l99)
 
 
@@ -261,3 +262,14 @@
       ((null l) (list x))
       ((= n 0) (cons x l))
       (t (cons (car l) (insert-at x (- n 1) (cdr l)))))))
+
+
+;; L-22 Create a list containing all integers within a given range.
+(defun range (a b)
+  (labels ((aux (acc high low)
+             (if (>= high low)
+                 (aux (cons high acc) (- high 1) low)
+                 acc)))
+    (if (< a b)
+        (aux '() b a)
+        (revrs (aux '() a b)))))
