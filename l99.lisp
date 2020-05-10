@@ -1,5 +1,5 @@
 ;;; OCaml L-99 problems with Common Lisp
-;; Current progress(2020/05/08): 1 ~ 21
+;; Current progress(2020/05/10): 1 ~ 23
 
 (defpackage :l99
   (:use :cl)
@@ -24,7 +24,8 @@
            :rotate
            :remove-at
            :insert-at
-           :range))
+           :range
+           :rand-select))
 (in-package :l99)
 
 
@@ -273,3 +274,23 @@
     (if (< a b)
         (aux '() b a)
         (revrs (aux '() a b)))))
+
+
+;; L-23 Extract a given number of randomly selected elements from a list.
+;; FIXME: Selected elements overlap.
+(defun rand-select (l n)
+  (when (listp l)
+    (labels ((extract (acc nn ls)
+               (cond
+                 ((null ls) (error "Not Found"))
+                 ((= nn 0) (cons (car ls) (append acc (cdr ls))))
+                 (t (extract (cons (car ls) acc) (- nn 1) (cdr ls)))))
+             (extract-rand (ls len) 
+               (extract '() (random len) ls))
+             (aux (nn acc ls len)
+               (if (= nn 0)
+                   acc
+                   (let ((picked (car (extract-rand ls len)))
+                         (rest (cdr (extract-rand ls len))))
+                     (aux (- nn 1) (cons picked acc) rest (- len 1))))))
+      (aux (min n (leng l)) '() l (leng l)))))
