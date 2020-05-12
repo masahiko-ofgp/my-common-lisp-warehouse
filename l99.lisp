@@ -1,5 +1,5 @@
 ;;; OCaml L-99 problems with Common Lisp
-;; Current progress(2020/05/10): 1 ~ 23
+;; Current progress(2020/05/12): 1 ~ 24
 
 (defpackage :l99
   (:use :cl)
@@ -25,7 +25,8 @@
            :remove-at
            :insert-at
            :range
-           :rand-select))
+           :rand-select
+           :lotto-select))
 (in-package :l99)
 
 
@@ -285,7 +286,7 @@
                  ((null ls) (error "Not Found"))
                  ((= nn 0) (cons (car ls) (append acc (cdr ls))))
                  (t (extract (cons (car ls) acc) (- nn 1) (cdr ls)))))
-             (extract-rand (ls len) 
+             (extract-rand (ls len)
                (extract '() (random len) ls))
              (aux (nn acc ls len)
                (if (= nn 0)
@@ -293,4 +294,10 @@
                    (let ((picked (car (extract-rand ls len)))
                          (rest (cdr (extract-rand ls len))))
                      (aux (- nn 1) (cons picked acc) rest (- len 1))))))
-      (aux (min n (leng l)) '() l (leng l)))))
+      (let ((len (leng l)))
+        (aux (min n len) '() l len)))))
+
+
+;; L-24 Lotto: Draw N different random numbers from the set 1..M.
+(defun lotto-select (n m)
+  (rand-select (range 1 m) n))
