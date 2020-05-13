@@ -1,5 +1,5 @@
 ;;; OCaml L-99 problems with Common Lisp
-;; Current progress(2020/05/13): 1 ~ 25
+;; Current progress(2020/05/13): 1 ~ 26
 
 (defpackage :l99
   (:use :cl)
@@ -27,7 +27,8 @@
            :range
            :rand-select
            :lotto-select
-           :permutation))
+           :permutation
+           :extract))
 (in-package :l99)
 
 
@@ -322,3 +323,18 @@
                           (rest (cdr tmp)))
                      (aux (cons picked acc) rest (- len 1))))))
       (aux '() l (leng l)))))
+
+
+;; L-26 Generate the combinations of K distinct objects chosen from the N
+;; elements of a list
+(defun extract (k l)
+  (when (listp l)
+    (if (<= k 0)
+        '(())
+        (cond
+          ((null l) '())
+          (t
+           (let ((with-h (mapcar #'(lambda (ls) (cons (car l) ls))
+                                 (extract (- k 1) (cdr l))))
+                 (without-h (extract k (cdr l))))
+             (append with-h without-h)))))))
