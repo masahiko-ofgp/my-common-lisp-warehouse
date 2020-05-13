@@ -1,5 +1,5 @@
 ;;; OCaml L-99 problems with Common Lisp
-;; Current progress(2020/05/12): 1 ~ 24
+;; Current progress(2020/05/13): 1 ~ 25
 
 (defpackage :l99
   (:use :cl)
@@ -26,7 +26,8 @@
            :insert-at
            :range
            :rand-select
-           :lotto-select))
+           :lotto-select
+           :permutation))
 (in-package :l99)
 
 
@@ -278,7 +279,6 @@
 
 
 ;; L-23 Extract a given number of randomly selected elements from a list.
-;; FIXME: Selected elements overlap.
 (defun rand-select (l n)
   (when (listp l)
     (labels ((extract (acc nn ls)
@@ -291,8 +291,9 @@
              (aux (nn acc ls len)
                (if (= nn 0)
                    acc
-                   (let ((picked (car (extract-rand ls len)))
-                         (rest (cdr (extract-rand ls len))))
+                   (let* ((tmp (extract-rand ls len))
+                          (picked (car tmp))
+                          (rest (cdr tmp)))
                      (aux (- nn 1) (cons picked acc) rest (- len 1))))))
       (let ((len (leng l)))
         (aux (min n len) '() l len)))))
@@ -301,3 +302,23 @@
 ;; L-24 Lotto: Draw N different random numbers from the set 1..M.
 (defun lotto-select (n m)
   (rand-select (range 1 m) n))
+
+
+;; L-25 Generate a random permutation of the elements of a list.
+(defun permutation (l)
+  (when (listp l)
+    (labels ((extract (acc n ls)
+               (cond
+                 ((null ls) (error "Not found"))
+                 ((= n 0) (cons (car ls) (append acc (cdr ls))))
+                 (t (extract (cons (car ls) acc) (- n 1) (cdr ls)))))
+             (extract-rand (ls len)
+               (extract '() (random len) ls))
+             (aux (acc ls len)
+               (if (= len 0)
+                   acc
+                   (let* ((tmp (extract-rand ls len))
+                          (picked (car tmp))
+                          (rest (cdr tmp)))
+                     (aux (cons picked acc) rest (- len 1))))))
+      (aux '() l (leng l)))))
