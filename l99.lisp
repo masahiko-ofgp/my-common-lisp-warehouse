@@ -37,7 +37,7 @@
   (when (listp l)
     (cond
       ((null l) nil)
-      ((eql (cdr l) nil) (car l))
+      ((null (cdr l)) (car l))
       (t (lst (cdr l))))))
 
 
@@ -338,3 +338,7 @@
                                  (extract (- k 1) (cdr l))))
                  (without-h (extract k (cdr l))))
              (append with-h without-h)))))))
+
+;; L-27 Group the elements of a set into disjoint subsets.
+
+; Difficult. On hold .........
