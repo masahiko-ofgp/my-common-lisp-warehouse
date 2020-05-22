@@ -341,4 +341,31 @@
 
 ;; L-27 Group the elements of a set into disjoint subsets.
 
-; Difficult. On hold .........
+; XXX: Control stack guard page temporarily disabled: proceed with caution.
+; It does NOT work!! Difficult. On Hold. 
+
+(defun group (l sizes)
+  (let* ((initial (mapcar #'(lambda (size) (list size '())) sizes)))
+    (labels ((prepend (p ls)
+               (labels ((emit (l acc) (cons l acc))
+                        (aux (f acc l)
+                          (cond
+                            ((null l) (funcall f '() acc))
+                            (t
+                             (let* ((ll (car l))
+                                    (n (car ll))
+                                    (ls (cdr ll))
+                                    (accm
+                                      (if (> n 0)
+                                          (funcall f (cons (list (- n 1) (cons p ls)) (cdr l)) acc)
+                                          acc)))
+                               (aux #'(lambda (l acc) (funcall f (cons (car l) ls) acc)) accm (cdr l)))))))
+                 (aux #'emit '() ls)))
+             (aux (ls)
+               (cond
+                 ((null ls) (list initial))
+                 (t (concatenate 'list (mapcar #'(lambda (r) (prepend (car l) r)) (aux (cdr l))))))))
+      (let* ((all (aux l))
+             (complete (loop for (x nil) in all when (zerop (car x)) collect all)))
+        (mapcar #'(lambda (x) (mapcar #'cdr x)) complete)))))
+
