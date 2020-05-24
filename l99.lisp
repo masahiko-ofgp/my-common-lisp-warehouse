@@ -1,5 +1,6 @@
 ;;; OCaml L-99 problems with Common Lisp
 ;; Current progress(2020/05/13): 1 ~ 26
+;; L-27 (Haskell L99-27 version) (2020/05/24)
 
 (defpackage :l99
   (:use :cl)
@@ -28,7 +29,8 @@
            :rand-select
            :lotto-select
            :permutation
-           :extract))
+           :extract
+           :group-hs))
 (in-package :l99)
 
 
@@ -369,3 +371,22 @@
              (complete (loop for (x nil) in all when (zerop (car x)) collect all)))
         (mapcar #'(lambda (x) (mapcar #'cdr x)) complete)))))
 
+; Haskell versoin L99-27.
+(defun combination (n l)
+  (cond
+    ((= n 0) (list (list '() l)))
+    ((null l) '())
+    (t
+     (let ((ts (loop for (ys nil) in (combination (- n 1) (cdr l))
+                     collect (list (cons (car l) ys) (cdr l))))
+           (ds (loop for (ys zs) in (combination n (cdr l))
+                     collect (list ys (cons (car l) zs)))))
+       (append ts ds)))))
+
+(defun group-hs (sizes l)
+  (cond
+    ((endp sizes) '(()))
+    (t
+     (loop for (g rs) in (combination (car sizes) l)
+           collect (loop for gs in (group (cdr sizes) rs)
+                         collect (cons g gs))))))
