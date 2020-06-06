@@ -1,6 +1,6 @@
 ;;; OCaml L-99 problems with Common Lisp
-;; Current progress(2020/05/13): 1 ~ 26
-;; L-27 (Haskell L99-27 version) (2020/05/24)
+;; Current progress(2020/06/06): 1 ~ 27
+;; L-27 is two patterns. (OCaml version and Haskell version)
 
 (defpackage :l99
   (:use :cl)
@@ -30,6 +30,7 @@
            :lotto-select
            :permutation
            :extract
+           :group-ml
            :group-hs))
 (in-package :l99)
 
@@ -342,34 +343,37 @@
              (append with-h without-h)))))))
 
 ;; L-27 Group the elements of a set into disjoint subsets.
-
-; XXX: Control stack guard page temporarily disabled: proceed with caution.
-; It does NOT work!! Difficult. On Hold. 
-
-(defun group (l sizes)
-  (let* ((initial (mapcar #'(lambda (size) (list size '())) sizes)))
-    (labels ((prepend (p ls)
+; OCaml version L99-27
+;    :use revrs and flttn
+(defun group-ml (l sizes)
+  (let* ((initial (mapcar #'(lambda (size) (list size)) sizes)))
+    (labels ((prepend (p l)
                (labels ((emit (l acc) (cons l acc))
-                        (aux (f acc l)
+                        (inner-aux (f acc l)
                           (cond
-                            ((null l) (funcall f '() acc))
+                            ((endp l) (funcall f '() acc))
                             (t
-                             (let* ((ll (car l))
-                                    (n (car ll))
-                                    (ls (cdr ll))
+                             (let* ((n (caar l))
+                                    (ll (cdar l))
                                     (accm
                                       (if (> n 0)
-                                          (funcall f (cons (list (- n 1) (cons p ls)) (cdr l)) acc)
+                                          (funcall f (cons (list (- n 1) (cons p ll)) (cdr l)) acc)
                                           acc)))
-                               (aux #'(lambda (l acc) (funcall f (cons (car l) ls) acc)) accm (cdr l)))))))
-                 (aux #'emit '() ls)))
-             (aux (ls)
+                               (inner-aux #'(lambda (ls acc) (funcall f (cons (car l) ls) acc)) accm (cdr l)))))))
+                 (inner-aux #'emit '() l)))
+             (aux (l)
                (cond
-                 ((null ls) (list initial))
-                 (t (concatenate 'list (mapcar #'(lambda (r) (prepend (car l) r)) (aux (cdr l))))))))
+                 ((endp l) (list initial))
+                 (t
+                  (let* ((hd (car l))
+                         (tl (cdr l)))
+                    (mapcan #'(lambda (r) (prepend hd r)) (aux tl)))))))
       (let* ((all (aux l))
-             (complete (loop for (x nil) in all when (zerop (car x)) collect all)))
-        (mapcar #'(lambda (x) (mapcar #'cdr x)) complete)))))
+             (complete (loop for i in all when (and (zerop (caar i)) (zerop (caadr i)))
+                             collect (loop for (nil j) in i
+                                           collect j))))
+        (loop for (i j) in complete
+              collect (list (flttn i) (flttn j)))))))
 
 ; Haskell versoin L99-27.
 (defun combination (n l)
