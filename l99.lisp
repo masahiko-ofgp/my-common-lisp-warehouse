@@ -31,7 +31,8 @@
            :permutation
            :extract
            :group-ml
-           :group-hs))
+           :group-hs
+           :length-sort))
 (in-package :l99)
 
 
@@ -394,3 +395,32 @@
      (loop for (g rs) in (combination (car sizes) l)
            collect (loop for gs in (group (cdr sizes) rs)
                          collect (cons g gs))))))
+
+
+;; L99-28 Sorting a list of lists according to length of sublists.
+(defun insert (cmp e l)
+  (cond
+    ((endp l) (list e))
+    (t
+     (if (<= (funcall cmp e (car l)) 0)
+         (cons e l)
+         (cons (car l) (insert cmp e (cdr l)))))))
+
+(defun srt (cmp l)
+  (cond
+    ((endp l) '())
+    (t (insert cmp (car l) (srt cmp (cdr l))))))
+
+(defun compare (x y)
+  (cond
+    ((= x y) 0)
+    ((> x y) 1)
+    (t -1)))
+
+(defun length-sort (l)
+  (let* ((ll (mapcar #'(lambda (l) (list (length l) l)) l))
+         (lll (srt #'(lambda (a b) (compare (car a) (car b))) ll)))
+    (mapcan #'cdr lll)))
+
+;(defun rle (l)) :WIP
+;(defun frequency-sort (l)) :WIP
