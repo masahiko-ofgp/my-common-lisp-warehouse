@@ -1,5 +1,5 @@
 ;;; OCaml L-99 problems with Common Lisp
-;; Current progress(2020/06/06): 1 ~ 27
+;; Current progress(2020/06/10): 1 ~ 28
 ;; L-27 is two patterns. (OCaml version and Haskell version)
 
 (defpackage :l99
@@ -32,7 +32,8 @@
            :extract
            :group-ml
            :group-hs
-           :length-sort))
+           :length-sort
+           :frequency-sort))
 (in-package :l99)
 
 
@@ -393,7 +394,7 @@
     ((endp sizes) '(()))
     (t
      (loop for (g rs) in (combination (car sizes) l)
-           collect (loop for gs in (group (cdr sizes) rs)
+           collect (loop for gs in (group-hs (cdr sizes) rs)
                          collect (cons g gs))))))
 
 
@@ -422,5 +423,23 @@
          (lll (srt #'(lambda (a b) (compare (car a) (car b))) ll)))
     (mapcan #'cdr lll)))
 
-;(defun rle (l)) :WIP
-;(defun frequency-sort (l)) :WIP
+(defun rle (l)
+  (labels ((aux (cnt acc ls)
+             (cond
+               ((endp ls) acc)
+               ((= (length ls) 1) (cons (list (car ls) (1+ cnt)) acc))
+               (t
+                (let* ((a (car ls))
+                       (b (cadr ls))
+                       (tl (cdr ls)))
+                  (if (= a b)
+                      (aux (1+ cnt) acc tl)
+                      (aux 0 (cons (list a (1+ cnt)) acc) tl)))))))
+  (aux 0 '() l)))
+
+(defun frequency-sort (l)
+  (let* ((lengths (mapcar #'length l))
+         (freq (rle (srt #'compare lengths)))
+         (by-freq (mapcar #'(lambda (l) (list (cadr (assoc (length l) freq)) l)) l))
+         (sorted (srt #'(lambda (a b) (compare (car a) (car b))) by-freq)))
+    (mapcar #'cdr sorted)))
