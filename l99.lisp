@@ -1,5 +1,5 @@
 ;;; OCaml L-99 problems with Common Lisp
-;; Current progress(2020/06/10): 1 ~ 28
+;; Working with lists (1 ~ 28)
 ;; L-27 is two patterns. (OCaml version and Haskell version)
 
 (defpackage :l99
