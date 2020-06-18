@@ -1,10 +1,12 @@
 ;; OCaml L-99 problems with Common Lisp
-;; Arithmetic (31~ )
+;; Arithmetic (31~32)
 
 (defpackage :l99-2
   (:use :cl)
   (:export :primep
-           :primep2))
+           :primep2
+           :gcd-
+           :ggcd))
 (in-package :l99-2)
 
 ;; L-31 Determine whether a given integer number is prime.
@@ -38,4 +40,28 @@
             (if (eql (find n primes) nil)
                 nil
                 t))))))
-            
+
+;; L-32 Determine the greatest common divisor of two positive integer.
+
+; version 1
+; e.g.)
+; * (gcd- 12 24)
+; 12
+(defun gcd- (a b)
+  (if (zerop b)
+      a
+      (gcd b (mod a b))))
+
+; version 2
+; e.g.)
+; * (ggcd 12 24 36)
+; 12
+(defun ggcd (a b &rest r)
+  (labels ((aux (a b)
+             (if (zerop b)
+                 a
+                 (aux b (mod a b)))))
+    (cond
+      ((endp r) (aux a b))
+      (t
+       (reduce #'aux (cons a (cons b r)))))))
