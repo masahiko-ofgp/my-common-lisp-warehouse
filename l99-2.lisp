@@ -1,12 +1,13 @@
 ;; OCaml L-99 problems with Common Lisp
-;; Arithmetic (31~32)
+;; Arithmetic (31~33)
 
 (defpackage :l99-2
   (:use :cl)
   (:export :primep
            :primep2
            :gcd-
-           :ggcd))
+           :ggcd
+           :coprime))
 (in-package :l99-2)
 
 ;; L-31 Determine whether a given integer number is prime.
@@ -65,3 +66,8 @@
       ((endp r) (aux a b))
       (t
        (reduce #'aux (cons a (cons b r)))))))
+
+
+;; L-33 Determine whether two positive integer numbers are coprime.
+(defun coprime (a b)
+  (eql (gcd- a b) 1))
