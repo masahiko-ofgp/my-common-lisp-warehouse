@@ -1,5 +1,5 @@
 ;; OCaml L-99 problems with Common Lisp
-;; Arithmetic (31~33)
+;; Arithmetic (31~34)
 
 (defpackage :l99-2
   (:use :cl)
@@ -7,7 +7,8 @@
            :primep2
            :gcd-
            :ggcd
-           :coprime))
+           :coprime
+           :phi))
 (in-package :l99-2)
 
 ;; L-31 Determine whether a given integer number is prime.
@@ -71,3 +72,14 @@
 ;; L-33 Determine whether two positive integer numbers are coprime.
 (defun coprime (a b)
   (eql (gcd- a b) 1))
+
+
+;; L-34 Calculate Euler's totient function φ(m).
+(defun phi (n)
+  (labels ((count-coprime (acc d)
+             (if (< d n)
+                 (count-coprime (if (coprime n d) (+ acc 1) acc) (+ 1 d))
+                 acc)))
+    (if (= n 1)
+        1
+        (count-coprime 0 1))))
