@@ -83,3 +83,14 @@
     (if (= n 1)
         1
         (count-coprime 0 1))))
+
+
+;; L-35 Determine the prime factors of a given positive integer.
+(defun factors (n)
+  (labels ((aux (d n)
+             (if (= n 1)
+                 nil
+                 (if (zerop (mod n d))
+                     (cons d (aux d (/ n d)))
+                     (aux (+ d 1) n)))))
+    (aux 2 n)))
