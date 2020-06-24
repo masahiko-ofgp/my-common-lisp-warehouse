@@ -1,5 +1,5 @@
 ;; OCaml L-99 problems with Common Lisp
-;; Arithmetic (31~34)
+;; Arithmetic (31~35)
 
 (defpackage :l99-2
   (:use :cl)
@@ -8,7 +8,8 @@
            :gcd-
            :ggcd
            :coprime
-           :phi))
+           :phi
+           :factors))
 (in-package :l99-2)
 
 ;; L-31 Determine whether a given integer number is prime.
