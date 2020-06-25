@@ -1,5 +1,5 @@
 ;; OCaml L-99 problems with Common Lisp
-;; Arithmetic (31~35)
+;; Arithmetic (31~36)
 
 (defpackage :l99-2
   (:use :cl)
@@ -9,7 +9,8 @@
            :ggcd
            :coprime
            :phi
-           :factors))
+           :factors
+           :factors2))
 (in-package :l99-2)
 
 ;; L-31 Determine whether a given integer number is prime.
@@ -94,4 +95,19 @@
                  (if (zerop (mod n d))
                      (cons d (aux d (/ n d)))
                      (aux (+ d 1) n)))))
+    (aux 2 n)))
+
+
+;; L-36 Determine the prime factors of a given positive integer (2).
+(defun factors2 (n)
+  (labels ((aux (d n)
+             (cond
+               ((= n 1) nil)
+               (t
+                (if (zerop (mod n d))
+                    (let* ((l (aux d (/ n d))))
+                      (if (eql (caar l) d)
+                          (cons (list (caar l) (+ (cadar l) 1)) (cdr l))
+                          (cons (list d 1) l)))
+                    (aux (+ d 1) n))))))
     (aux 2 n)))
