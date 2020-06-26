@@ -1,5 +1,5 @@
 ;; OCaml L-99 problems with Common Lisp
-;; Arithmetic (31~36)
+;; Arithmetic (31~37)
 
 (defpackage :l99-2
   (:use :cl)
@@ -10,7 +10,8 @@
            :coprime
            :phi
            :factors
-           :factors2))
+           :factors2
+           :phi-improved))
 (in-package :l99-2)
 
 ;; L-31 Determine whether a given integer number is prime.
@@ -111,3 +112,20 @@
                           (cons (list d 1) l)))
                     (aux (+ d 1) n))))))
     (aux 2 n)))
+
+
+;; L-37 Calculate Euler's totient function φ(m) (improved).
+(defun pow (n p)
+  (if (< p 1)
+      1
+      (* n (pow n (- p 1)))))
+
+(defun phi-improved (n)
+  (labels ((aux (acc l)
+             (cond
+               ((endp l) acc)
+               (t
+                (let ((p (caar l))
+                      (m (cadar l)))
+                  (aux (* (* (- p 1) (pow p (- m 1))) acc) (cdr l)))))))
+    (aux 1 (factors2 n))))
