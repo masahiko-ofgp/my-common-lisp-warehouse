@@ -1,5 +1,5 @@
 ;; OCaml L-99 problems with Common Lisp
-;; Arithmetic (31~37)
+;; Arithmetic (31~38)
 
 (defpackage :l99-2
   (:use :cl)
@@ -11,7 +11,8 @@
            :phi
            :factors
            :factors2
-           :phi-improved))
+           :phi-improved
+           :timeit))
 (in-package :l99-2)
 
 ;; L-31 Determine whether a given integer number is prime.
@@ -129,3 +130,19 @@
                       (m (cadar l)))
                   (aux (* (* (- p 1) (pow p (- m 1))) acc) (cdr l)))))))
     (aux 1 (factors2 n))))
+
+
+;; L-38 Compare the two methods of calculating Euler's totient function.
+;; * (timeit #'phi 10090)
+;; * (timeit #'phi-improved 10090)
+(defun timeit (f n)
+  (let ((run-time (get-internal-run-time))
+        (real-time (get-internal-real-time)))
+    (progn
+      (funcall f n)
+      (format t "Run Time: ~,6F~%" (/ (- (get-internal-run-time)
+                                         run-time)
+                                      internal-time-units-per-second))
+      (format t "Real Time: ~,6F~%" (/ (- (get-internal-real-time)
+                                          real-time)
+                                       internal-time-units-per-second)))))
