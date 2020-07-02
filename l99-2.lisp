@@ -1,10 +1,10 @@
 ;; OCaml L-99 problems with Common Lisp
-;; Arithmetic (31~38)
+;; Arithmetic (31~39)
 
 (defpackage :l99-2
   (:use :cl)
   (:export :primep
-           :primep2
+           ;:primep2
            :gcd-
            :ggcd
            :coprime
@@ -12,7 +12,8 @@
            :factors
            :factors2
            :phi-improved
-           :timeit))
+           :timeit
+           :all-primes))
 (in-package :l99-2)
 
 ;; L-31 Determine whether a given integer number is prime.
@@ -27,25 +28,28 @@
       (and (/= nn 1)
            (is-not-divisor 2)))))
 
-; version 2
-(defun filter (n l)
-  (loop for i in l when (/= (mod i n) 0)
-        collect i))
 
-(defun primep2 (n)
-  (let ((l (loop for i from 2 upto n collect i)))
-    (labels ((make-primes (acc ls)
-               (cond
-                 ((endp ls) acc)
-                 (t
-                  (if (< (car ls) (sqrt n))
-                      (make-primes (cons (car ls) acc) (filter (car ls) (cdr ls)))
-                      (append (cons (car ls) acc) (cdr ls)))))))
-      (let ((primes (make-primes '() l)))
-        (unless (< n 2)
-            (if (eql (find n primes) nil)
-                nil
-                t))))))
+;; version 2
+;; XXX: It dones not work!! 
+
+;;(defun filter (n l)
+;;  (loop for i in l when (/= (mod i n) 0)
+;;        collect i))
+
+;;(defun primep2 (n)
+;;  (let ((l (loop for i from 2 upto n collect i)))
+;;    (labels ((make-primes (acc ls)
+;;               (cond
+;;                 ((endp ls) acc)
+;;                 (t
+;;                  (if (< (car ls) (sqrt n))
+;;                      (make-primes (cons (car ls) acc) (filter (car ls) (cdr ls)))
+;;                      (append (cons (car ls) acc) (cdr ls)))))))
+;;      (let ((primes (make-primes '() l)))
+;;        (unless (< n 2)
+;;            (if (eql (find n primes) nil)
+;;                nil
+;;                t))))))
 
 ;; L-32 Determine the greatest common divisor of two positive integer.
 
@@ -146,3 +150,13 @@
       (format t "Real Time: ~,6F~%" (/ (- (get-internal-real-time)
                                           real-time)
                                        internal-time-units-per-second)))))
+
+
+;; L-39 A list of prime numbers.
+(defun all-primes (a b)
+  (if (> a b)
+      nil
+      (let ((rst (all-primes (+ a 1) b)))
+        (if (primep a)
+            (cons a rst)
+            rst))))
