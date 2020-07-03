@@ -4,7 +4,8 @@
 (defpackage :l99-2
   (:use :cl)
   (:export :primep
-           ;:primep2
+           :make-primes-list
+           :primep2
            :gcd-
            :ggcd
            :coprime
@@ -17,8 +18,7 @@
 (in-package :l99-2)
 
 ;; L-31 Determine whether a given integer number is prime.
-
-; version 1
+;; version 1
 (defun primep (n)
   (let* ((nn (abs n)))
     (labels ((is-not-divisor (d)
@@ -30,43 +30,58 @@
 
 
 ;; version 2
-;; XXX: It dones not work!! 
+(defun filter (n l)
+  (if (null l)
+      nil
+      (if (= (mod (car l) n) 0)
+          (filter n (cdr l))
+          (cons (car l) (filter n (cdr l))))))
 
-;;(defun filter (n l)
-;;  (loop for i in l when (/= (mod i n) 0)
-;;        collect i))
+(defun range (s e)
+  (if (> s e)
+      nil
+      (loop for i from s upto e collect i)))
 
-;;(defun primep2 (n)
-;;  (let ((l (loop for i from 2 upto n collect i)))
-;;    (labels ((make-primes (acc ls)
-;;               (cond
-;;                 ((endp ls) acc)
-;;                 (t
-;;                  (if (< (car ls) (sqrt n))
-;;                      (make-primes (cons (car ls) acc) (filter (car ls) (cdr ls)))
-;;                      (append (cons (car ls) acc) (cdr ls)))))))
-;;      (let ((primes (make-primes '() l)))
-;;        (unless (< n 2)
-;;            (if (eql (find n primes) nil)
-;;                nil
-;;                t))))))
+(defun make-primes-list (n)
+  "Can be used with L-39.
+   e.g.)
+   * (length (make-primes-list 7920))
+   1000
+  "
+  (labels ((aux (acc ls)
+             (cond
+               ((endp ls) acc)
+               (t
+                (if (< (car ls) (sqrt n))
+                    (aux (cons (car ls) acc) (filter (car ls) (cdr ls)))
+                    (append (cons (car ls) acc) (cdr ls)))))))
+    (let ((primes (aux '() (range 2 n))))
+      (sort primes '<))))
+
+(defun primep2 (n)
+  (unless (< n 2)
+    (if (eql (find n (make-primes-list n)) nil)
+        nil
+        t)))
+
 
 ;; L-32 Determine the greatest common divisor of two positive integer.
-
-; version 1
-; e.g.)
-; * (gcd- 12 24)
-; 12
+;; version 1
 (defun gcd- (a b)
+  "e.g.)
+  * (gcd- 12 24)
+  12
+  "
   (if (zerop b)
       a
       (gcd b (mod a b))))
 
-; version 2
-; e.g.)
-; * (ggcd 12 24 36)
-; 12
+;; version 2
 (defun ggcd (a b &rest r)
+  "e.g.)
+  * (ggcd 12 24 36)
+  12
+  "
   (labels ((aux (a b)
              (if (zerop b)
                  a
