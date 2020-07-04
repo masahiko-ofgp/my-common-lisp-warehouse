@@ -1,5 +1,5 @@
 ;; OCaml L-99 problems with Common Lisp
-;; Arithmetic (31~39)
+;; Arithmetic (31~41)
 
 (defpackage :l99-2
   (:use :cl)
@@ -14,7 +14,9 @@
            :factors2
            :phi-improved
            :timeit
-           :all-primes))
+           :all-primes
+           :goldbach
+           :golcbach-limit))
 (in-package :l99-2)
 
 ;; L-31 Determine whether a given integer number is prime.
@@ -175,3 +177,26 @@
         (if (primep a)
             (cons a rst)
             rst))))
+
+
+;; L-40 Goldbach's conjecture.
+(defun goldbach (n)
+  (labels ((aux (d)
+             (if (and (primep d) (primep (- n d)))
+                 (list d (- n d))
+                 (aux (+ d 1)))))
+    (aux 2)))
+
+
+;; L-41 A list of Goldbach compositions.
+(defun goldbach-list (a b)
+  (if (> a b)
+      '()
+      (if (= (mod a 2) 1)
+          (goldbach-list (+ a 1) b)
+          (cons (list a (goldbach a)) (goldbach-list (+ a 2) b)))))
+
+(defun goldbach-limit (a b lim)
+  (let ((l (goldbach-list a b)))
+    (loop for x in l when (and (> (caadr x) lim) (> (cadadr x) lim))
+         collect x)))
