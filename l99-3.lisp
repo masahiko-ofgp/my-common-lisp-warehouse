@@ -1,17 +1,14 @@
 ;; OCaml L-99 problems with Common Lisp
-;; Logic and Codes (46~47)
+;; Logic and Codes (46~48)
 
 (defpackage :l99-3
   (:use :cl)
-  (:export :var.
-           :not.
-           :and.
-           :or.
-           :get-ex
-           :get-e1
-           :get-e2
-           :evl
+  (:export :.var.
+           :.not.
+           :.and.
+           :.or.
            :table
+           :table2
            ))
 (in-package :l99-3)
 
@@ -112,3 +109,32 @@
         (list t nil (evl a t b nil expr))
         (list nil t (evl a nil b t expr))
         (list nil nil (evl a nil b nil expr))))
+
+
+;; L-48 Truth tables for logical expressions.
+(defun evl2 (val-vars expr)
+  (cond
+    ((typep expr 'var.) (loop for i in val-vars
+                           when (eql (get-ex expr) (car i))
+                           return (cadr i)))
+    ((typep expr 'not.) (not (evl2 val-vars expr)))
+    ((typep expr 'and.) (and (evl2 val-vars (get-e1 expr))
+                             (evl2 val-vars (get-e2 expr))))
+    ((typep expr 'or.) (or (evl2 val-vars (get-e1 expr))
+                           (evl2 val-vars (get-e2 expr))))))
+(defun table-make (val-vars vars expr)
+  (cond
+    ((endp vars) (list (list (reverse val-vars) (evl2 val-vars expr))))
+    (t
+     (append (table-make (cons (list (car vars) t) val-vars) (cdr vars) expr)
+             (table-make (cons (list (car vars) nil) val-vars) (cdr vars) expr)))))
+(defun table2 (vars expr)
+  "e.g.)
+  * (defvar a (.var. #\a))
+  * (defvar b (.var. #\b))
+  * (defvar c (.var. #\c))
+  * (defvar ex (.or. (.and. a (.or. b c)) (.or. (.and. a b) (.and. a c))))
+  * (table2 '(#\a #\b #\c) ex)
+  "
+  (table-make '() vars expr))
+      
