@@ -1,5 +1,5 @@
 ;; OCaml L-99 problems with Common Lisp
-;; Logic and Codes (46~48)
+;; Logic and Codes (46~49)
 
 (defpackage :l99-3
   (:use :cl)
@@ -9,6 +9,7 @@
            :.or.
            :table
            :table2
+           :gray
            ))
 (in-package :l99-3)
 
@@ -138,3 +139,23 @@
   "
   (table-make '() vars expr))
       
+
+;; L-49 Gray code
+(defun ^ (s1 s2) (concatenate 'string s1 s2))
+
+(defun rev-append (l1 l2)
+  (append (reverse l1) l2))
+
+(defun gray (n)
+  (labels ((gray-next-level (k l)
+             (if (< k n)
+                 (let* ((tmp (reduce #'(lambda (x y)
+                                         (list (cons (^ "0" y) (car x))
+                                               (cons (^ "1" y) (cadr x))))
+                                     l
+                                     :initial-value '(() ())))
+                        (first-half (car tmp))
+                        (second-half (cadr tmp)))
+                   (gray-next-level (+ k 1) (rev-append first-half second-half)))
+                 l)))
+    (gray-next-level 1 '("0" "1"))))
