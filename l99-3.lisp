@@ -1,5 +1,5 @@
 ;; OCaml L-99 problems with Common Lisp
-;; Logic and Codes (46~49)
+;; Logic and Codes (46~50)
 
 (defpackage :l99-3
   (:use :cl)
@@ -10,6 +10,7 @@
            :table
            :table2
            :gray
+           :huffman
            ))
 (in-package :l99-3)
 
@@ -159,3 +160,123 @@
                    (gray-next-level (+ k 1) (rev-append first-half second-half)))
                  l)))
     (gray-next-level 1 '("0" "1"))))
+    
+    
+;; L-50 Huffman code
+
+;;;;;; Option Class ;;;;;;;;;;;;;;;;;;
+
+(defclass some* ()
+  ((val
+    :initarg :val
+    :accessor val)))
+(defclass none* () nil)
+
+(defgeneric unwrap (kind))
+(defmethod  unwrap ((kind some*))
+  (with-accessors ((val val)) kind
+    val))
+(defmethod unwrap ((kind none*)) nil)
+
+(defun option (&optional x)
+  (cond
+    ((null x) (make-instance 'none*))
+    (t
+     (make-instance 'some* :val x))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;; Tree Class ;;;;;;;;;;;;;;;;;;
+
+(defclass leaf ()
+  ((val
+    :initarg :val
+    :accessor val)))
+(defclass node ()
+  ((v1
+    :initarg :v1
+    :accessor v1)
+   (v2
+    :initarg :v2
+    :accessor v2)))
+
+(defgeneric get-val (kind))
+(defmethod get-val ((kind leaf))
+  (with-accessors ((val val)) kind
+    val))
+(defmethod get-val ((kind node))
+  (with-accessors ((v1 v1) (v2 v2)) kind
+    (list v1 v2)))
+
+(defun tree (x &optional y)
+  (cond
+    ((null y) (make-instance 'leaf :val x))
+    (t (make-instance 'node :v1 x :v2 y))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+(defclass pq ()
+  ((data
+    :initarg :data
+    :initform (make-array 101 :initial-element '())
+    :accessor data)
+   (fst
+    :initarg :fst
+    :initform 101
+    :accessor fst)))
+(defmethod add ((q pq) p x)
+  (progn
+    (setf (elt (slot-value q 'data) p)
+          (cons x (elt (slot-value q 'data) p)))
+    (setf (slot-value q 'fst) (min p (slot-value q 'fst)))))
+(defmethod get-min ((q pq))
+  (if (= (slot-value q 'fst) 101)
+      (option nil)
+      (let ((l (elt (slot-value q 'data) (slot-value q 'fst))))
+        (cond
+          ((endp l) (error "False"))
+          (t
+           (let ((p (slot-value q 'fst)))
+             (progn
+               (setf (elt (slot-value q 'data) (slot-value q 'fst)) (cdr l))
+               (loop
+                  :while (and (< (slot-value q 'fst) 101)
+                              (endp (elt (slot-value q 'data) (slot-value q 'fst))))
+                  :do (setf (slot-value q 'fst) (+ 1 (slot-value q 'fst))))
+               (option (list p (car l))))))))))
+
+
+(defun huffman-tree (q)
+  (let ((x (get-min q))
+        (y (get-min q)))
+    (cond
+      ((and (typep x 'some*) (typep y 'some*)) (progn
+                                                 (add q
+                                                      (+ (car (unwrap x))
+                                                         (car (unwrap y)))
+                                                      (tree (cadr (unwrap x))
+                                                            (cadr (unwrap y))))
+                                                 (huffman-tree q)))
+      ((and (typep x 'some*) (typep y 'none*)) (cadr (unwrap x)))
+      ((and (typep x 'none*) (typep y 'some*)) (cadr (unwrap y)))
+      (t (error "False")))))
+
+(defun prefixes-of-tree (q &optional prefix)
+  (cond
+    ((typep q 'leaf) (list (list (get-val q) prefix)))
+    ((typep q 'node) (let ((t0 (car (get-val q)))
+                           (t1 (cadr (get-val q))))
+                       (if (null prefix)
+                         (append (prefixes-of-tree t0 "0")
+                                 (prefixes-of-tree t1 "1"))
+                         (append (prefixes-of-tree t0 (concatenate 'string  prefix "0"))
+                                 (prefixes-of-tree t1 (concatenate 'string prefix "1"))))))))
+
+(defun huffman (fs)
+  (when (= (reduce #'(lambda (s p) (+ s (cadr p))) fs :initial-value 0) 100)
+    (let ((q (make-instance 'pq)))
+      (progn
+        (dolist (i fs)
+          (add q (cadr i) (tree (car i))))
+        (prefixes-of-tree (huffman-tree q))))))
