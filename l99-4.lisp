@@ -1,11 +1,12 @@
 ;; OCaml L-99 problems with Common Lisp
-;; Binary Tree (55~56)
+;; Binary Tree (55~57)
 
 (defpackage :l99-4
   (:use :cl)
   (:export :cbal-tree
            :mirrorp
-           :symmetricp))
+           :symmetricp
+           :construct))
 (in-package :l99-4)
 
 (defstruct node* val l r)
@@ -57,3 +58,18 @@
       (let ((l (node*-l bt))
             (r (node*-r bt)))
         (mirrorp l r)))))
+
+
+;; L-57 Binary search trees
+(defun insert (tree x)
+  (cond
+    ((typep tree 'empty*) (node x (empty) (empty)))
+    ((typep tree 'node*) (let ((y (node*-val tree))
+                               (l (node*-l tree))
+                               (r (node*-r tree)))
+                           (cond
+                             ((= x y) tree)
+                             ((< x y) (node y (insert l x) r))
+                             (t (node y l (insert r x))))))))
+(defun construct (l)
+  (reduce #'insert l :initial-value (empty)))
