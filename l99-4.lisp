@@ -1,12 +1,13 @@
 ;; OCaml L-99 problems with Common Lisp
-;; Binary Tree (55~57)
+;; Binary Tree (55~58)
 
 (defpackage :l99-4
   (:use :cl)
   (:export :cbal-tree
            :mirrorp
            :symmetricp
-           :construct))
+           :construct
+           :sym-cbal-trees))
 (in-package :l99-4)
 
 (defstruct node* val l r)
@@ -73,3 +74,8 @@
                              (t (node y l (insert r x))))))))
 (defun construct (l)
   (reduce #'insert l :initial-value (empty)))
+
+
+;; L-58 Generate-and-test paradigm
+(defun sym-cbal-trees (n)
+  (loop for i in (cbal-tree n) when (symmetricp i) :collect i))
