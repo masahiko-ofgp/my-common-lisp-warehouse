@@ -1,5 +1,5 @@
 ;; OCaml L-99 problems with Common Lisp
-;; Binary Tree (55~58)
+;; Binary Tree (55~59)
 
 (defpackage :l99-4
   (:use :cl)
@@ -7,7 +7,8 @@
            :mirrorp
            :symmetricp
            :construct
-           :sym-cbal-trees))
+           :sym-cbal-trees
+           :hbal-tree))
 (in-package :l99-4)
 
 (defstruct node* val l r)
@@ -79,3 +80,14 @@
 ;; L-58 Generate-and-test paradigm
 (defun sym-cbal-trees (n)
   (loop for i in (cbal-tree n) when (symmetricp i) :collect i))
+
+
+;; L-59 Construct height-balanced binary trees
+(defun hbal-tree (n)
+  (cond
+    ((= n 0) (list (empty)))
+    ((= n 1) (list (node #\x (empty) (empty))))
+    (t
+      (let ((t1 (hbal-tree (- n 1)))
+            (t2 (hbal-tree (- n 2))))
+        (add-trees-with t1 t1 (add-trees-with t1 t2 (add-trees-with t2 t1 '())))))))
