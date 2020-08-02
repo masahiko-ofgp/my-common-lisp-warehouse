@@ -8,7 +8,8 @@
            :symmetricp
            :construct
            :sym-cbal-trees
-           :hbal-tree))
+           :hbal-tree
+           :hbal-tree-nodes))
 (in-package :l99-4)
 
 (defstruct node* val l r)
@@ -91,3 +92,91 @@
       (let ((t1 (hbal-tree (- n 1)))
             (t2 (hbal-tree (- n 2))))
         (add-trees-with t1 t1 (add-trees-with t1 t2 (add-trees-with t2 t1 '())))))))
+
+
+;; L-60 Construct height-balanced binary trees with a given number of nodes
+(defun max-nodes (h)
+  (- (ash 1 h) 1))
+
+(defun min-nodes-loop (m0 m1 h)
+  (if (<= h 1)
+    m1
+    (min-nodes-loop m1 (+ (+ m1 m0) 1) (- h 1))))
+
+(defun min-nodes (h)
+  (if (<= h 0)
+    0
+    (min-nodes-loop 0 1 h)))
+
+(defun min-height (n)
+  (round (/ (ceiling (log (+ n 1.0))) (log 2.0))))
+
+(defun ceil-log2-loop (lg plus1 n)
+  (if (= n 1)
+    (if plus1
+      (+ lg 1)
+      lg)
+    (ceil-log2-loop (+ lg 1) (or plus1 (/= 0 (logand n 1))) (/ n 2))))
+
+(defun ceil-log2 (n)
+  (ceil-log2-loop 0 nil n))
+
+(defun max-height-search (h mh mh1 n)
+  (if (<= mh n)
+    (max-height-search (+ h 1) mh1 (+ (+ mh1 mh) 1) n)
+    (- h 1)))
+
+(defun max-height (n)
+  (max-height-search 0 0 1 n))
+
+(defun fold-range (f init n0 n1)
+  (if (> n0 n1)
+    init
+    (fold-range f (funcall f init n0) (+ n0 1) n1)))
+
+(defun add-swap-left-right (trees)
+  (reduce #'(lambda (a n)
+              (cond
+                ((typep n 'node*) (cons (node (node*-val n)
+                                              (node*-r n)
+                                              (node*-l n))
+                                        a))
+                ((typep n 'empty*) a)))
+          trees
+          :initial-value trees))
+
+(defun hbal-tree-nodes-height (h n)
+  (when (and (<= (min-nodes h) n) (<= n (max-nodes h)))
+    (labels ((add-hbal-tree-node (l h1 h2 n)
+               (let ((min-n1 (max (min-nodes h1) (- (- n 1) (max-nodes h2))))
+                     (max-n1 (min (max-nodes h1) (- (- n 1) (min-nodes h2)))))
+                 (fold-range #'(lambda (l n1)
+                                 (let ((t1 (hbal-tree-nodes-height h1 n1))
+                                       (t2 (hbal-tree-nodes-height h2 (- (- n 1) n1))))
+                                   (reduce #'(lambda (l tt1)
+                                               (reduce #'(lambda (l tt2)
+                                                           (cons (node #\x tt1 tt2) l))
+                                                       t2 :initial-value l))
+                                           t1 :initial-value l)))
+                             l min-n1 max-n1))))
+      (if (= h 0)
+          (list (empty))
+          (let* ((acc1 (add-hbal-tree-node '() (- h 1) (- h 2) n))
+                 (acc2 (add-swap-left-right acc1)))
+            (add-hbal-tree-node acc2 (- h 1) (- h 1) n))))))
+
+(defun rev-append (l1 l2)
+  (append (reverse l1) l2))
+
+;; FIXME:
+;; OK -> * (length (hbal-tree-nodes 15))
+;;       1553
+;; Error -> * (mapcar #'hbal-tree-nodes '(0 1 2 3))
+;;       The missing list is returned.
+(defun hbal-tree-nodes (n)
+  (fold-range #'(lambda (l h) (rev-append (hbal-tree-nodes-height h n) l))
+              '()
+              (min-height n)
+              (max-height n)))
+
+
