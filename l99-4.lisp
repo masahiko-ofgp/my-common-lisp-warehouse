@@ -109,7 +109,7 @@
     (min-nodes-loop 0 1 h)))
 
 (defun min-height (n)
-  (round (/ (ceiling (log (+ n 1.0))) (log 2.0))))
+  (truncate (/ (ceiling (log (+ n 1.0))) (log 2.0))))
 
 (defun ceil-log2-loop (lg plus1 n)
   (if (= n 1)
@@ -169,11 +169,6 @@
 (defun rev-append (l1 l2)
   (append (reverse l1) l2))
 
-;; FIXME:
-;; OK -> * (length (hbal-tree-nodes 15))
-;;       1553
-;; Error -> * (mapcar #'hbal-tree-nodes '(0 1 2 3))
-;;       The missing list is returned.
 (defun hbal-tree-nodes (n)
   (fold-range #'(lambda (l h) (rev-append (hbal-tree-nodes-height h n) l))
               '()
