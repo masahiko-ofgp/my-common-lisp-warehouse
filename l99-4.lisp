@@ -1,5 +1,5 @@
 ;; OCaml L-99 problems with Common Lisp
-;; Binary Tree (55~61A)
+;; Binary Tree (55~62B)
 
 (defpackage :l99-4
   (:use :cl)
@@ -11,7 +11,9 @@
            :hbal-tree
            :hbal-tree-nodes
            :count-leaves
-           :leaves))
+           :leaves
+           :internals
+           :at-level))
 (in-package :l99-4)
 
 (defstruct node* val l r)
@@ -202,3 +204,31 @@
                     (cons (node*-val tree) acc)
                     (aux (node*-l tree) (aux (node*-r tree) acc)))))))
     (aux tree '())))
+
+
+;; L-62 Collect internal nodes of a binary tree in a list.
+(defun internals (tree)
+  (labels ((aux (tree acc)
+             (cond
+               ((typep tree 'empty*) acc)
+               ((typep tree 'node*)
+                (if (and (typep (node*-l tree) 'empty*)
+                         (typep (node*-r tree) 'empty*))
+                  acc
+                  (aux (node*-l tree) (cons (node*-val tree)
+                                            (aux (node*-r tree) acc))))))))
+    (aux tree '())))
+
+
+;; L-62-B Collect the nodes at a given level in a list.
+(defun at-level (tree level)
+  (labels ((aux (tree acc counter)
+             (cond
+               ((typep tree 'empty*) acc)
+               (t
+                 (if (= counter level)
+                   (cons (node*-val tree) acc)
+                   (aux (node*-l tree)
+                        (aux (node*-r tree) acc (+ counter 1))
+                        (+ counter 1)))))))
+    (aux tree '() 1)))
