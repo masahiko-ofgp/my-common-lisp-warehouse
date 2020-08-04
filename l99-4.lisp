@@ -1,5 +1,5 @@
 ;; OCaml L-99 problems with Common Lisp
-;; Binary Tree (55~59)
+;; Binary Tree (55~61A)
 
 (defpackage :l99-4
   (:use :cl)
@@ -9,7 +9,9 @@
            :construct
            :sym-cbal-trees
            :hbal-tree
-           :hbal-tree-nodes))
+           :hbal-tree-nodes
+           :count-leaves
+           :leaves))
 (in-package :l99-4)
 
 (defstruct node* val l r)
@@ -176,3 +178,27 @@
               (max-height n)))
 
 
+;; L-61 Count the leaves of a binary tree.
+(defun count-leaves (tree)
+  (cond
+    ((typep tree 'empty*) 0)
+    ((typep tree 'node*)
+     (if (and (typep (node*-l tree) 'empty*)
+              (typep (node*-r tree) 'empty*))
+         1
+         (+ (count-leaves (node*-l tree))
+            (count-leaves (node*-r tree)))))
+    (t (error "Arguments type error"))))
+
+
+;; L-61-A Collect the leaves of a binary tree in a list.
+(defun leaves (tree)
+  (labels ((aux (tree acc)
+             (cond
+               ((typep tree 'empty*) acc)
+               ((typep tree 'node*)
+                (if (and (typep (node*-l tree) 'empty*)
+                         (typep (node*-r tree) 'empty*))
+                    (cons (node*-val tree) acc)
+                    (aux (node*-l tree) (aux (node*-r tree) acc)))))))
+    (aux tree '())))
