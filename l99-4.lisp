@@ -14,7 +14,9 @@
            :leaves
            :internals
            :at-level
-           :complete-binary-tree))
+           :complete-binary-tree
+           :example-layout-tree
+           :layout-binary-tree-1))
 (in-package :l99-4)
 
 (defstruct node* val l r)
@@ -265,3 +267,39 @@
                             (c (cadr tmp)))
                        (myflatten p (aux (+ l 1) c)))))))
         (car (aux 0 l))))))
+
+
+;; L-64 Layout a binary tree (1).
+(defun leaf (x) (node x (empty) (empty)))
+
+(defvar example-layout-tree (node #\n
+                                  (node #\k
+                                        (node #\c
+                                              (leaf #\a)
+                                              (node #\h
+                                                    (node #\g
+                                                          (leaf #\e)
+                                                          (empty))
+                                                    (empty)))
+                                        (leaf #\m))
+                                  (node #\u
+                                        (node #\p
+                                              (empty)
+                                              (node #\s
+                                                    (leaf #\q)
+                                                    (empty)))
+                                        (empty))))
+(defun layout-binary-tree-1 (tree)
+  (labels ((layout (depth x-left tr)
+             (cond
+               ((typep tr 'empty*) (list (empty) x-left))
+               ((typep tr 'node*)
+                (let* ((tmp1 (layout (+ depth 1) x-left (node*-l tr)))
+                       (ll (car tmp1))
+                       (l-x-max (cadr tmp1))
+                       (tmp2 (layout (+ depth 1) (+ l-x-max 1) (node*-r tr)))
+                       (rr (car tmp2))
+                       (r-x-max (cadr tmp2)))
+                  (list (node (list (node*-val tr) l-x-max depth) ll rr) r-x-max)))
+                (t (error "Invalid arg")))))
+    (car (layout 1 1 tree))))
