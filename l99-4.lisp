@@ -1,5 +1,5 @@
 ;; OCaml L-99 problems with Common Lisp
-;; Binary Tree (55~62B)
+;; Binary Tree (55~63)
 
 (defpackage :l99-4
   (:use :cl)
@@ -13,7 +13,8 @@
            :count-leaves
            :leaves
            :internals
-           :at-level))
+           :at-level
+           :complete-binary-tree))
 (in-package :l99-4)
 
 (defstruct node* val l r)
@@ -232,3 +233,35 @@
                         (aux (node*-r tree) acc (+ counter 1))
                         (+ counter 1)))))))
     (aux tree '() 1)))
+
+
+;; L-63 Construct a complete binary tree.
+(defun split-n (l acc n)
+  (cond
+    ((zerop n) (list (reverse acc) l))
+    ((endp l) (list (reverse acc) '()))
+    (t
+      (split-n (cdr l) (cons (car l) acc) (- n 1)))))
+
+(defun myflatten (p c)
+  (cond
+    ((endp c) (mapcar #'(lambda (x) (node x (empty) (empty))) p))
+    ((endp (cdr c)) (cons (node (car p) (car c) (empty))
+                          (myflatten (cdr p) '())))
+    (t
+     (cons (node (car p) (car c) (cadr c))
+           (myflatten (cdr p) (cddr c))))))
+
+(defun complete-binary-tree (l)
+  (cond
+    ((null l) (empty))
+    (t
+      (labels ((aux (l ls)
+                 (cond
+                   ((endp ls) '())
+                   (t
+                     (let* ((tmp (split-n ls '() (ash 1 l)))
+                            (p (car tmp))
+                            (c (cadr tmp)))
+                       (myflatten p (aux (+ l 1) c)))))))
+        (car (aux 0 l))))))
