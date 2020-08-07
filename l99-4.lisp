@@ -1,5 +1,5 @@
 ;; OCaml L-99 problems with Common Lisp
-;; Binary Tree (55~63)
+;; Binary Tree (55~65)
 
 (defpackage :l99-4
   (:use :cl)
@@ -16,7 +16,9 @@
            :at-level
            :complete-binary-tree
            :example-layout-tree
-           :layout-binary-tree-1))
+           :layout-binary-tree-1
+           :example-layout-tree-2
+           :layout-binary-tree-2))
 (in-package :l99-4)
 
 (defstruct node* val l r)
@@ -303,3 +305,50 @@
                   (list (node (list (node*-val tr) l-x-max depth) ll rr) r-x-max)))
                 (t (error "Invalid arg")))))
     (car (layout 1 1 tree))))
+
+
+;; L-65 Layout binary tree (2).
+(defvar example-layout-tree-2
+  (node #\n
+        (node #\k
+              (node #\c
+                    (leaf #\a)
+                    (node #\e
+                          (leaf #\d)
+                          (leaf #\g)))
+              (leaf #\m))
+        (node #\u
+              (node #\p
+                    (empty)
+                    (leaf #\q))
+              (empty))))
+
+(defun layout-binary-tree-2 (tree)
+  (labels ((height (tr)
+             (cond
+               ((typep tr 'empty*) 0)
+               ((typep tr 'node*) (+ 1 (max (height (node*-l tr))
+                                            (height (node*-r tr)))))
+               (t (error "height")))))
+    (let ((tree-height (height tree)))
+      (labels ((find-missing-left (depth tr)
+                 (cond
+                   ((typep tr 'empty*) (- tree-height depth))
+                   ((typep tr 'node*) (find-missing-left (+ depth 1) (node*-l tr)))
+                   (t (error "find-missing-left")))))
+        (let ((translate-dst (- (ash 1 (find-missing-left 0 tree)) 1)))
+          (labels ((layout (depth x-root tr)
+                     (cond
+                       ((typep tr 'empty*) (empty))
+                       ((typep tr 'node*)
+                        (let* ((spacing (ash 1 (- (- tree-height depth) 1)))
+                               (ll (layout (+ depth 1)
+                                           (- x-root spacing)
+                                           (node*-l tr)))
+                               (rr (layout (+ depth 1)
+                                           (+ x-root spacing)
+                                           (node*-r tr))))
+                          (node (list (node*-val tr) x-root depth) ll rr)))
+                        (t (error "layout")))))
+            (layout 1 (- (ash 1 (- tree-height 1)) translate-dst) tree)))))))
+
