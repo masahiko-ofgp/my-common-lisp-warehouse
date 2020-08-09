@@ -1,5 +1,5 @@
 ;; OCaml L-99 problems with Common Lisp
-;; Binary Tree (55~65)
+;; Binary Tree (55~66)
 
 (defpackage :l99-4
   (:use :cl)
@@ -18,7 +18,8 @@
            :example-layout-tree
            :layout-binary-tree-1
            :example-layout-tree-2
-           :layout-binary-tree-2))
+           :layout-binary-tree-2
+           :layout-binary-tree-3))
 (in-package :l99-4)
 
 (defstruct node* val l r)
@@ -353,7 +354,7 @@
             (layout 1 (- (ash 1 (- tree-height 1)) translate-dst) tree)))))))
 
 
-;; WIP: It does not work. L-66 Layout binary tree (3).
+;; L-66 Layout binary tree (3).
 (defun layout-binary-tree-3 (tree)
   (labels ((translate-x (d tr)
              (cond
@@ -366,18 +367,13 @@
                (t (error "translate-x"))))
            (dist (lr rl)
              (cond
-               ((not (and (endp lr) (endp rl))) (max (- (car lr) (car rl))
-                                                     (dist (cdr lr) (cdr rl))))
                ((or (endp lr) (endp rl)) 0)
-               (t (error "dist"))))
+               (t (max (- (car lr) (car rl)) (dist (cdr lr) (cdr rl))))))
            (merge-profiles (p1 p2)
              (cond
-               ((not (and (endp p1) (endp p2))) (cons (car p1)
-                                                      (merge-profiles (cdr p1)
-                                                                      (cdr p2))))
                ((endp p1) p2)
                ((endp p2) p1)
-               (t (error "merge-profiles"))))
+               (t (cons (car p1) (merge-profiles (cdr p1) (cdr p2))))))
            (layout (depth tr)
              (cond
                ((typep tr 'empty*) (list '() (empty) '()))
