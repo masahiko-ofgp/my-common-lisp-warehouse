@@ -1,5 +1,5 @@
 ;; OCaml L-99 problems with Common Lisp
-;; Binary Tree (55~66)
+;; Binary Tree (55~67)
 
 (defpackage :l99-4
   (:use :cl)
@@ -19,7 +19,9 @@
            :layout-binary-tree-1
            :example-layout-tree-2
            :layout-binary-tree-2
-           :layout-binary-tree-3))
+           :layout-binary-tree-3
+           :string-of-tree
+           :tree-of-string))
 (in-package :l99-4)
 
 (defstruct node* val l r)
@@ -402,3 +404,43 @@
            (x-min (reduce #'min l :initial-value 0)))
       (translate-x (- 1 x-min) tt))))
 
+
+;; L-67 A string representation of binary trees.
+(defun string-of-tree (tree)
+  (cond
+    ((typep tree 'empty*) "_")
+    ((typep tree 'node*)
+     (let ((data (princ-to-string (node*-val tree))))
+       (cond
+         ((and (typep (node*-l tree) 'empty*)
+               (typep (node*-r tree) 'empty*))
+          data)
+         (t
+           (concatenate 'string
+                        data
+                        "("
+                        (string-of-tree (node*-l tree))
+                        ","
+                        (string-of-tree (node*-r tree))
+                        ")")))))))
+
+(defun tree-of-string (str)
+  "e.g.) * tree-of-string \"a(b(_,_)_)\" "
+  (labels ((make (ofs s)
+             (if (or (>= ofs (length s)) 
+                     (char= (schar s ofs) (or #\, #\) #\_)))
+               (list (empty) ofs)
+               (let ((v (schar s ofs)))
+                 (if (and (< (+ ofs 1) (length s))
+                          (char= (schar s (+ ofs 1)) #\())
+                   (let* ((tmp1 (make (+ ofs 2) s))
+                          (l (car tmp1))
+                          (ofs1 (cadr tmp1))
+                          (tmp2 (make (+ ofs1 1) s))
+                          (r (car tmp2))
+                          (ofs2 (cadr tmp2)))
+                     (list (node v l r) (+ ofs2 1)))
+                   (if (char= v #\_)
+                     (list (empty) (+ ofs 1))
+                     (list (node v (empty) (empty)) (+ ofs 1))))))))
+    (car (make 0 str))))
