@@ -1,5 +1,5 @@
 ;; OCaml L-99 problems with Common Lisp
-;; Binary Tree (55~68)
+;; Binary Tree (55~69)
 
 (defpackage :l99-4
   (:use :cl)
@@ -24,7 +24,9 @@
            :tree-of-string
            :preorder
            :inorder
-           :pre-in-tree))
+           :pre-in-tree
+           :dotstring-of-tree
+           :tree-of-dotstring))
 (in-package :l99-4)
 
 (defstruct node* val l r)
@@ -491,3 +493,39 @@
              (li (caadr tmp))
              (ri (cadadr tmp)))
         (node h1 (pre-in-tree lp li) (pre-in-tree rp ri))))))
+
+
+;; L-69 Dotstring representation of binary trees.
+(defun dotstring-of-tree (tree)
+  (cond
+    ((typep tree 'empty*) ".")
+    ((typep tree 'node*)
+     (let ((data (princ-to-string (node*-val tree))))
+       (cond
+         ((and (typep (node*-l tree) 'empty*)
+               (typep (node*-r tree) 'empty*))
+          (concatenate 'string data "." "."))
+         (t
+           (concatenate 'string
+                        data
+                        (dotstring-of-tree (node*-l tree))
+                        (dotstring-of-tree (node*-r tree)))))))))
+
+(defun tree-of-dotstring (str)
+  "e.g.) * tree-of-dotstring \"ab..c..\" "
+  (labels ((make (ofs s)
+             (if (or (>= ofs (length s)) 
+                     (char= (schar s ofs) #\.))
+               (list (empty) (+ ofs 1))
+               (let ((v (schar s ofs)))
+                 (if (< (+ ofs 1) (length s))
+                   (let* ((tmp1 (make (+ ofs 1) s))
+                          (l (car tmp1))
+                          (ofs1 (cadr tmp1))
+                          (tmp2 (make ofs1 s))
+                          (r (car tmp2)))
+                     (list (node v l r) (+ ofs1 1)))
+                   (if (char= v #\.)
+                     (list (empty) (+ ofs 1))
+                     (list (node v (empty) (empty)) (+ ofs 1))))))))
+    (car (make 0 str))))
