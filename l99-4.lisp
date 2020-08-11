@@ -1,5 +1,5 @@
 ;; OCaml L-99 problems with Common Lisp
-;; Binary Tree (55~67)
+;; Binary Tree (55~68)
 
 (defpackage :l99-4
   (:use :cl)
@@ -21,7 +21,10 @@
            :layout-binary-tree-2
            :layout-binary-tree-3
            :string-of-tree
-           :tree-of-string))
+           :tree-of-string
+           :preorder
+           :inorder
+           :pre-in-tree))
 (in-package :l99-4)
 
 (defstruct node* val l r)
@@ -444,3 +447,47 @@
                      (list (empty) (+ ofs 1))
                      (list (node v (empty) (empty)) (+ ofs 1))))))))
     (car (make 0 str))))
+
+
+;; L-68 Preorder and inorder sequences of binary trees.
+(defun preorder (tree)
+  (cond
+    ((typep tree 'empty*) '())
+    ((typep tree 'node*) (cons (node*-val tree)
+                               (append (preorder (node*-l tree))
+                                       (preorder (node*-r tree)))))
+    (t (error "Argument type error"))))
+
+(defun inorder (tree)
+  (cond
+    ((typep tree 'empty*) '())
+    ((typep tree 'node*) (append (inorder (node*-l tree))
+                                 (cons (node*-val tree)
+                                       (inorder (node*-r tree)))))
+    (t (error "Argument type error"))))
+
+(defun split-pre-in (p i x accp acci)
+  (cond
+    ((and (endp p) (endp i)) (list (list (reverse accp) (reverse acci))
+                                   '(() ())))
+    (t
+      (let ((h1 (car p))
+            (t1 (cdr p))
+            (h2 (car i))
+            (t2 (cdr i)))
+        (if (equal x h2)
+          (list (list (cdr (reverse (cons h1 accp))) t1)
+                (list (reverse (cdr (cons h2 acci))) t2))
+          (split-pre-in t1 t2 x (cons h1 accp) (cons h2 acci)))))))
+
+(defun pre-in-tree (p i)
+  (cond
+    ((and (endp p) (endp i)) (empty))
+    (t
+      (let* ((h1 (car p))
+             (tmp (split-pre-in p i h1 '() '()))
+             (lp (caar tmp))
+             (rp (cadar tmp))
+             (li (caadr tmp))
+             (ri (cadadr tmp)))
+        (node h1 (pre-in-tree lp li) (pre-in-tree rp ri))))))
