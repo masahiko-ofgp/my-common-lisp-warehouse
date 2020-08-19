@@ -3,7 +3,8 @@
 
 (defpackage l99-6
   (:use cl)
-  (:export :graph-to-adj))
+  (:export :graph-to-adj
+           :adj-to-graph))
 (in-package :l99-6)
 
 (defstruct graph nodes edges)
@@ -34,7 +35,26 @@
                                    for tm in tmp
                                    collect (list n tm))))))))
 
-;;(defun adj-to-graph (a))
+(defun equal-pair (p1 p2)
+  (if (or (and (equal (car p1) (car p2)) (equal (cadr p1) (cadr p2)))
+          (and (equal (cadr p1) (car p2)) (equal (car p1) (cadr p2))))
+    t
+    nil))
+
+(defun adj-to-graph (adj)
+  (cond
+    ((not (typep adj 'adjacency)) (error "adj-to-graph"))
+    ((endp (adjacency-l adj)) (make-graph :nodes '() :edges '()))
+    (t
+      (let* ((nodes (loop for (h nil) in (adjacency-l adj) collect h))
+             (tmp (loop for (h tl) in (adjacency-l adj)
+                        append (mapcar #'(lambda (x) (list h x)) tl)))
+             (edges (remove-duplicates tmp
+                                       :test #'equal-pair
+                                       :from-end t)))
+        (make-graph :nodes nodes :edges edges)))))
+
+
 ;;(defun graph-to-fri (g))
 ;;(defun fri-to-graph (f))
 ;;(defun adj-to-fri (a))
