@@ -41,8 +41,8 @@
 (defun lst (l)
   (when (listp l)
     (cond
-      ((null l) nil)
-      ((null (cdr l)) (car l))
+      ((endp l) nil)
+      ((endp (cdr l)) (car l))
       (t (lst (cdr l))))))
 
 
@@ -50,8 +50,8 @@
 (defun lst-two (l)
   (when (listp l)
     (cond
-      ((or (null l) (null (cdr l))) nil)
-      ((null (cddr l)) l)
+      ((endp (or l (cdr l))) nil)
+      ((endp (cddr l)) l)
       (t (lst-two (cdr l))))))
 
 
@@ -59,7 +59,7 @@
 (defun at (l k)
   (when (listp l)
     (cond
-      ((null l) nil)
+      ((endp l) nil)
       (t (if (= k 1)
              (car l)
              (at (cdr l) (1- k)))))))
@@ -69,7 +69,7 @@
 (defun leng (l)
   (when (listp l)
     (labels ((aux (n ls)
-               (if (null ls)
+               (if (endp ls)
                    n
                    (aux (1+ n) (cdr ls)))))
     (aux 0 l))))
@@ -78,7 +78,7 @@
 (defun revrs (l)
   (when (listp l)
     (labels ((aux (acc ls)
-               (if (null ls)
+               (if (endp ls)
                    acc
                    (aux (cons (car ls) acc) (cdr ls)))))
     (aux '() l))))
@@ -95,7 +95,7 @@
   (when (listp l)
     (labels ((aux (acc ls)
                   (cond
-                    ((null ls) acc)
+                    ((endp ls) acc)
                     ((atom (car ls)) (aux (cons (car ls) acc) (cdr ls)))
                     (t (aux (aux acc (car ls)) (cdr ls))))))
       (revrs (aux '() l)))))
@@ -105,7 +105,7 @@
 (defun compress (l)
   (when (listp l)
     (cond
-      ((or (null l) (null (cdr l))) l)
+      ((endp (or l (cdr l))) l)
       ((equal (car l) (cadr l)) (compress (cdr l)))
       ((not (equal (car l) (cadr l))) (cons (car l) (compress (cdr l))))
       (t l))))
@@ -116,8 +116,8 @@
   (when (listp l)
     (labels ((aux (current acc ls)
                (cond
-                 ((null ls) ls)
-                 ((null (cdr ls)) (cons (cons (car ls) current) acc))
+                 ((endp ls) ls)
+                 ((endp (cdr ls)) (cons (cons (car ls) current) acc))
                  ((equal (car ls) (cadr ls)) (aux (cons (car ls) current) acc (cdr ls)))
                  (t (aux '() (cons (cons (car ls) current) acc) (cdr ls))))))
       (revrs (aux '() '() l)))))
@@ -128,8 +128,8 @@
   (when (listp l)
     (labels ((aux (cont acc ls)
                   (cond
-                    ((null ls) '())
-                    ((null (cdr ls)) (cons (cons (+ cont 1) (car ls)) acc))
+                    ((endp ls) '())
+                    ((endp (cdr ls)) (cons (cons (+ cont 1) (car ls)) acc))
                     ((equal (car ls) (cadr ls)) (aux (+ cont 1) acc (cdr ls)))
                     (t (aux 0 (cons (cons (+ cont 1) (car ls)) acc) (cdr ls))))))
       (revrs (aux 0 '() l)))))
@@ -147,8 +147,8 @@
                    (make-many :value (cons cnt x))))
              (aux (cnt acc ls)
                   (cond
-                    ((null ls) '())
-                    ((null (cdr ls)) (cons (rle (+ cnt 1) (car ls)) acc))
+                    ((endp ls) '())
+                    ((endp (cdr ls)) (cons (rle (+ cnt 1) (car ls)) acc))
                     ((equal (car ls) (cadr ls)) (aux (+ cnt 1) acc (cdr ls)))
                     (t (aux 0 (cons (rle (+ cnt 1) (car ls)) acc) (cdr ls))))))
     (revrs (aux 0 '() l)))))
@@ -163,8 +163,8 @@
                    (many (cons x acc) (- n 1) x)))
              (aux (acc ls)
                (cond
-                 ((null ls) acc)
-                 ((and (atom (car ls)) (not (null (cdr ls)))) (aux (cons (car ls) acc) (cdr ls)))
+                 ((endp ls) acc)
+                 ((and (atom (car ls)) (not (endp (cdr ls)))) (aux (cons (car ls) acc) (cdr ls)))
                  (t (aux (many acc (caar ls) (cdar ls)) (cdr ls))))))
       (aux '() (revrs l)))))
 
@@ -173,7 +173,7 @@
 (defun duplicate (l)
   (when (listp l)
     (cond
-      ((null l) '())
+      ((endp l) '())
       (t (cons (car l) (cons (car l) (duplicate (cdr l))))))))
 
 
@@ -186,7 +186,7 @@
                    (prepend (- nn 1) (cons x acc) x)))
              (aux (acc ls)
                (cond
-                 ((null ls) acc)
+                 ((endp ls) acc)
                  (t (aux (prepend n acc (car ls)) (cdr ls))))))
       (aux '() (revrs l)))))
 
@@ -196,7 +196,7 @@
   (when (listp l)
     (labels ((aux (i ls)
                (cond
-                 ((null ls) '())
+                 ((endp ls) '())
                  ((= i n) (aux 1 (cdr ls)))
                  (t (cons (car ls) (aux (+ i 1) (cdr ls)))))))
       (aux 1 l))))
@@ -207,7 +207,7 @@
   (when (listp l)
     (labels ((aux (i acc ls)
                (cond
-                 ((null ls) (list (revrs acc) '()))
+                 ((endp ls) (list (revrs acc) '()))
                  ((= i 0) (list (revrs acc) (cdr ls)))
                  (t (aux (- i 1) (cons (car ls) acc) (cdr ls))))))
       (aux n '() l))))
@@ -218,11 +218,11 @@
   (when (listp l)
     (labels ((take (n ls)
                (cond
-                 ((or (null ls) (= n 0)) '())
+                 ((or (endp ls) (= n 0)) '())
                  (t (cons (car ls) (take (- n 1) (cdr ls))))))
              (drop (n ls)
                (cond
-                 ((null ls) '())
+                 ((endp ls) '())
                  ((= n 0) ls)
                  (t (drop (- n 1) (cdr ls))))))
       (take (+ 1 (- k i)) (drop i l)))))
@@ -232,7 +232,7 @@
 (defun fold-until (f acc n l)
   (when (listp l)
     (cond
-      ((null l) (list acc '()))
+      ((endp l) (list acc '()))
       ((= n 0) (list acc (cdr l)))
       (t (fold-until f (funcall f acc (car l)) (- n 1) (cdr l))))))
 
@@ -259,7 +259,7 @@
 (defun remove-at (n l)
   (when (listp l)
     (cond
-      ((null l) '())
+      ((endp l) '())
       ((= n 0) (cdr l))
       (t (cons (car l) (remove-at (- n 1) (cdr l)))))))
 
@@ -268,7 +268,7 @@
 (defun insert-at (x n l)
   (when (listp l)
     (cond
-      ((null l) (list x))
+      ((endp l) (list x))
       ((= n 0) (cons x l))
       (t (cons (car l) (insert-at x (- n 1) (cdr l)))))))
 
@@ -289,7 +289,7 @@
   (when (listp l)
     (labels ((extract (acc nn ls)
                (cond
-                 ((null ls) (error "Not Found"))
+                 ((endp ls) (error "Not Found"))
                  ((= nn 0) (cons (car ls) (append acc (cdr ls))))
                  (t (extract (cons (car ls) acc) (- nn 1) (cdr ls)))))
              (extract-rand (ls len)
@@ -315,7 +315,7 @@
   (when (listp l)
     (labels ((extract (acc n ls)
                (cond
-                 ((null ls) (error "Not found"))
+                 ((endp ls) (error "Not found"))
                  ((= n 0) (cons (car ls) (append acc (cdr ls))))
                  (t (extract (cons (car ls) acc) (- n 1) (cdr ls)))))
              (extract-rand (ls len)
@@ -337,7 +337,7 @@
     (if (<= k 0)
         '(())
         (cond
-          ((null l) '())
+          ((endp l) '())
           (t
            (let ((with-h (mapcar #'(lambda (ls) (cons (car l) ls))
                                  (extract (- k 1) (cdr l))))
@@ -381,7 +381,7 @@
 (defun combination (n l)
   (cond
     ((= n 0) (list (list '() l)))
-    ((null l) '())
+    ((endp l) '())
     (t
      (let ((ts (loop for (ys nil) in (combination (- n 1) (cdr l))
                      collect (list (cons (car l) ys) (cdr l))))
