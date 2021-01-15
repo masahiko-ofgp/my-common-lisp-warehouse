@@ -4,7 +4,9 @@
 (defpackage l99-6
   (:use cl)
   (:export :graph-to-adj
-           :adj-to-graph))
+           :adj-to-graph
+           :pair-of-fri
+           :fir-of-string))
 (in-package :l99-6)
 
 (defstruct graph nodes edges)
@@ -54,7 +56,17 @@
                                        :from-end t)))
         (make-graph :nodes nodes :edges edges)))))
 
+(defun pair-of-fri (a b)
+  (if (eql a b)
+    (format nil "~A" a)
+    (format nil "~A-~A" a b)))
 
+(defun fri-of-string (fri)
+  (cond
+    ((endp fri) nil)
+    (t (concatenate 'string
+                    (format nil "~A" (car fri))
+                    (fri-of-string (cdr fri))))))
 ;;(defun graph-to-fri (g))
 ;;(defun fri-to-graph (f))
 ;;(defun adj-to-fri (a))
