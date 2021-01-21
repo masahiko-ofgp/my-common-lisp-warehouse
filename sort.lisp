@@ -2,7 +2,8 @@
   (:use :cl)
   (:export :isort
            :bsort
-           :qsort))
+           :qsort
+           :qsort22))
 (in-package :sort)
 
 
@@ -47,3 +48,23 @@
              (remove-if-not #'(lambda (x) (= x pivot)) lst)
              (qsort (remove-if-not #'(lambda (x) (> x pivot)) lst)))
       lst)))
+
+(defun %partition (p l)
+  (labels ((aux (p y n l)
+             (if (endp l)
+               (list (nreverse y) (nreverse n))
+               (if (funcall p (car l))
+                 (aux p (cons (car l) y) n (cdr l))
+                 (aux p y (cons (car l) n) (cdr l))))))
+    (let ((result (aux p '() '() l)))
+      result)))
+
+(defun qsort2 (lst)
+  "Quick Sort version 2"
+  (cond
+    ((endp lst) lst)
+    (t
+      (let* ((result (%partition #'(lambda (x) (< x (car lst))) (cdr lst)))
+             (l (car result))
+             (r (cadr result)))
+        (nconc (qsort2 l) (cons (car lst) (qsort2 r)))))))
