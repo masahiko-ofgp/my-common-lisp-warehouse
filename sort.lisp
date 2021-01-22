@@ -3,7 +3,8 @@
   (:export :isort
            :bsort
            :qsort
-           :qsort22))
+           :qsort2
+           :msort))
 (in-package :sort)
 
 
@@ -58,7 +59,6 @@
                  (aux p y (cons (car l) n) (cdr l))))))
     (let ((result (aux p '() '() l)))
       result)))
-
 (defun qsort2 (lst)
   "Quick Sort version 2"
   (cond
@@ -68,3 +68,22 @@
              (l (car result))
              (r (cadr result)))
         (nconc (qsort2 l) (cons (car lst) (qsort2 r)))))))
+
+
+(defun %merge (l1 l2)
+  (cond
+    ((endp l1) l2)
+    ((endp l2) l1)
+    (t
+      (if (< (car l1) (car l2))
+        (cons (car l1) (%merge (cdr l1) l2))
+        (cons (car l2) (%merge l1 (cdr l2)))))))
+(defun msort (lst)
+  "Merge Sort"
+  (cond
+    ((or (endp lst) (= (length lst) 1)) lst)
+    (t
+      (let* ((mid (round (/ (length lst) 2)))
+             (l (msort (subseq lst 0 mid)))
+             (r (msort (subseq lst mid))))
+        (%merge l r)))))
