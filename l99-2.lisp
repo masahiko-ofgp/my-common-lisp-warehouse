@@ -1,6 +1,6 @@
 ;; OCaml L-99 problems with Common Lisp
 ;; Arithmetic (31~41)
-
+(in-package :cl-user)
 (defpackage :l99-2
   (:use :cl)
   (:export :primep

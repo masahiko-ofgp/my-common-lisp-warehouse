@@ -1,3 +1,4 @@
+(in-package :cl-user)
 (defpackage :fizzbuzz
   (:use :cl)
   (:export :run-dotimes-fizzbuzz

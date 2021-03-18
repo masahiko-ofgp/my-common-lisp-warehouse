@@ -1,6 +1,6 @@
 ;; L99 problems with Common Lisp
 ;; Graphs (80~)
-
+(in-package :cl-user)
 (defpackage l99-6
   (:use cl)
   (:export :graph-to-adj

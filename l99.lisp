@@ -1,7 +1,7 @@
 ;;; OCaml L-99 problems with Common Lisp
 ;; Working with lists (1 ~ 28)
 ;; L-27 is two patterns. (OCaml version and Haskell version)
-
+(in-package :cl-user)
 (defpackage :l99
   (:use :cl)
   (:export :lst

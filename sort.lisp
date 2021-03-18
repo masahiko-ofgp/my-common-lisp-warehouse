@@ -1,3 +1,4 @@
+(in-package :cl-user)
 (defpackage :sort
   (:use :cl)
   (:export :isort
@@ -43,7 +44,8 @@
 
 (defun qsort (lst)
   "Quick Sort"
-  (let ((pivot (car lst)))
+  ;(let ((pivot (car lst)))
+  (let ((pivot (nth (round (/ (length lst) 2)) lst)))
     (if (cdr lst)
       (nconc (qsort (remove-if-not #'(lambda (x) (< x pivot)) lst))
              (remove-if-not #'(lambda (x) (= x pivot)) lst)

@@ -1,3 +1,4 @@
+(in-package :cl-user)
 (defpackage :greeting
   (:use :cl)
   (:export :hello))

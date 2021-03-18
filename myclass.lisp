@@ -1,3 +1,4 @@
+(in-package :cl-user)
 (defpackage :myclass
   (:use :cl)
   (:export :main))

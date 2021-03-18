@@ -1,3 +1,4 @@
+(in-package :cl-user)
 (defpackage :hanoi
   (:use :cl)
   (:export :run-hanoi))

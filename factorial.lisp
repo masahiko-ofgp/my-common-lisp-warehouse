@@ -1,3 +1,4 @@
+(in-package :cl-user)
 (defpackage :factorial
   (:use :cl)
   (:export :fact))

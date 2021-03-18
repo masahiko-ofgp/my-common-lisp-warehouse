@@ -1,6 +1,6 @@
 ;; OCaml L-99 problems with Common Lisp
 ;; Binary Tree (55~69)
-
+(in-package :cl-user)
 (defpackage :l99-4
   (:use :cl)
   (:export :cbal-tree

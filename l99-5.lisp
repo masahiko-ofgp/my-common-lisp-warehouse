@@ -1,6 +1,6 @@
 ;; OCaml L-99 problems with Common Lisp
 ;; Multiway Trees (70C~73)
-
+(in-package :cl-user)
 (defpackage :l99-5
   (:use :cl)
   (:export :count-nodes

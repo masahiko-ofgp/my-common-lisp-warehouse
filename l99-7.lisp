@@ -1,5 +1,6 @@
 ;; OCaml L-99 problems with Common Lisp
 ;; Miscellaneous Problems (91~)
+(in-package :cl-user)
 (defpackage :l99-7
   (:use :cl)
   (:export :queens-positions))

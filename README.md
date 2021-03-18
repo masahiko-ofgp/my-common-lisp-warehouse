@@ -2,10 +2,15 @@
 
 個人学習用
 
+- 私の環境:
+    - OS: Manjaro Linux
+    - SBCL 2.1.1
+    - rlwrapを入れています
+
 ## Usage
 
 ```
-$ ros run
+$ rlwrap sbcl
 
 * (load "ファイル名")
 * (in-package :パッケージ名) 
@@ -14,6 +19,5 @@ $ ros run
 終了したい場合
 
 ```
-* (in-package :cl-user)
-* (quit)
+* (cl-user::quit)
 ```

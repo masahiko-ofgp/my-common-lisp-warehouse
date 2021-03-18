@@ -1,6 +1,6 @@
 ;; OCaml L-99 problems with Common Lisp
 ;; Logic and Codes (46~50)
-
+(in-package :cl-user)
 (defpackage :l99-3
   (:use :cl)
   (:export :.var.

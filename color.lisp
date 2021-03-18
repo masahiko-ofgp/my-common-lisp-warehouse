@@ -1,3 +1,4 @@
+(in-package :cl-user)
 (defpackage :color
   (:use :cl)
   (:export :colorize
@@ -21,7 +22,9 @@
                         :fg-white "37"
                         :bg-white "47"))
 
-
+;;; Example:
+;;; * (colorize :fg-red "Hello, world!!~%")
+;;; Hello, world!!   <----- Display the character string in red.
 (defun colorize (color st)
   (let ((color-code (getf *color-table* color)))
     (format t "~c[~Am~A~c[0m" #\ESC color-code st #\ESC)))

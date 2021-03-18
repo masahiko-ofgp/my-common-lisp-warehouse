@@ -1,3 +1,4 @@
+(in-package :cl-user)
 (defpackage :mystruct
   (:use :cl)
   (:export :main))
