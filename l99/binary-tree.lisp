@@ -1,7 +1,7 @@
 ;; OCaml L-99 problems with Common Lisp
 ;; Binary Tree (55~69)
 (in-package :cl-user)
-(defpackage :l99-4
+(defpackage :binary-tree
   (:use :cl)
   (:export :cbal-tree
            :mirrorp
@@ -27,7 +27,7 @@
            :pre-in-tree
            :dotstring-of-tree
            :tree-of-dotstring))
-(in-package :l99-4)
+(in-package :binary-tree)
 
 (defstruct node* val l r)
 (defun node (val l r)

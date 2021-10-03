@@ -1,13 +1,13 @@
 ;; L99 problems with Common Lisp
 ;; Graphs (80~)
 (in-package :cl-user)
-(defpackage l99-6
+(defpackage :graphs
   (:use cl)
   (:export :graph-to-adj
            :adj-to-graph
            :pair-of-fri
            :fir-of-string))
-(in-package :l99-6)
+(in-package :graphs)
 
 (defstruct graph nodes edges)
 (defstruct adjacency l) ;May change

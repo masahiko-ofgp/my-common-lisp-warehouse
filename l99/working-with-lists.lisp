@@ -2,7 +2,7 @@
 ;; Working with lists (1 ~ 28)
 ;; L-27 is two patterns. (OCaml version and Haskell version)
 (in-package :cl-user)
-(defpackage :l99
+(defpackage :working-with-lists
   (:use :cl)
   (:export :lst
            :lst-two
@@ -34,7 +34,7 @@
            :group-hs
            :length-sort
            :frequency-sort))
-(in-package :l99)
+(in-package :working-with-lists)
 
 
 ;; L-01 Return the last element of a list.

@@ -1,11 +1,17 @@
 (in-package :cl-user)
 (defpackage :factorial
   (:use :cl)
-  (:export :fact))
+  (:export :fact-normal
+           :fact-cps))
 (in-package :factorial)
 
 
-(defun fact (n)
+(defun fact-normal (n)
+  (if (<= n 1)
+    1
+    (* n (fact-normal (1- n)))))
+
+(defun fact-cps (n)
   (labels ((aux (n f)
              (if (zerop n)
                (funcall f 1)

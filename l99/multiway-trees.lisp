@@ -1,7 +1,7 @@
 ;; OCaml L-99 problems with Common Lisp
 ;; Multiway Trees (70C~73)
 (in-package :cl-user)
-(defpackage :l99-5
+(defpackage :multiway-trees
   (:use :cl)
   (:export :count-nodes
            :string-of-tree
@@ -9,7 +9,7 @@
            :ipl
            :bottom-up
            :lispy))
-(in-package :l99-5)
+(in-package :multiway-trees)
 
 (defvar example-mult-tree
   '(#\a ((#\f ((#\g ())))

@@ -1,7 +1,7 @@
 ;; OCaml L-99 problems with Common Lisp
 ;; Logic and Codes (46~50)
 (in-package :cl-user)
-(defpackage :l99-3
+(defpackage :logic-and-codes
   (:use :cl)
   (:export :.var.
            :.not.
@@ -12,7 +12,7 @@
            :gray
            :huffman
            ))
-(in-package :l99-3)
+(in-package :logic-and-codes)
 
 
 (defclass var. ()

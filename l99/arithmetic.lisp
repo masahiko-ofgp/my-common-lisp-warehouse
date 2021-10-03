@@ -1,7 +1,7 @@
 ;; OCaml L-99 problems with Common Lisp
 ;; Arithmetic (31~41)
 (in-package :cl-user)
-(defpackage :l99-2
+(defpackage :arithmetic
   (:use :cl)
   (:export :primep
            :make-primes-list
@@ -17,7 +17,7 @@
            :all-primes
            :goldbach
            :golcbach-limit))
-(in-package :l99-2)
+(in-package :arithmetic)
 
 ;; L-31 Determine whether a given integer number is prime.
 ;; version 1
